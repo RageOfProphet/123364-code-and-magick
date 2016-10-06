@@ -1,7 +1,7 @@
 # Личный проект «Код и Магия» [![Build status][travis-image]][travis-url] [![Dependency status][dependency-image]][dependency-url]
 
 * Студент: [Дмитрий Безуглый](https://up.htmlacademy.ru/javascript/7/user/123364).
-* Наставник: `Неизвестно`.
+* Наставник: [Геннадий Попов](https://htmlacademy.ru/profile/id252341).
 
 ---
 
