@@ -407,11 +407,12 @@ window.Game = (function() {
     /**
      * Выводит текст
      * @param {String} message
-     * @param {Number} rectangleWidth
+     * @param {Object} rectanglePosition
      * @private
      */
-    _drawRectangleText: function(message, rectangleWidth) {
+    _drawRectangleText: function(message, rectanglePosition) {
       var ctx = this.ctx;
+      var rectangleWidth = rectanglePosition.x3 - rectanglePosition.x2;
       var str = message;
       var lineHeight = 22;
       var positionYStart = 75;
@@ -425,18 +426,25 @@ window.Game = (function() {
       ctx.textBaseline = 'hanging';
       ctx.fillStyle = 'black';
 
-      for (var i = 0; i <= counter; i++) {
+      for (var i = 0; i < counter; i++) {
         caretEnd = str.length - caretStart <= strLimit ? str.length : strLimit;
         currentStr = str.slice(caretStart, caretEnd);
 
         caretStart = 0;
         caretEnd = caretEnd === str.length ? caretEnd : currentStr.lastIndexOf(' ');
         currentStr = currentStr.slice(caretStart, caretEnd);
-        ctx.fillText(currentStr, 335, positionYStart);
+        ctx.fillText(currentStr, rectanglePosition.x2 + 15, positionYStart);
 
         positionYStart += lineHeight;
         str = str.slice(caretEnd + 1, str.length);
       }
+
+      rectanglePosition.y1 = positionYStart + 40;
+      rectanglePosition.y4 = positionYStart + 30;
+
+      ctx.globalCompositeOperation = 'destination-over';
+      this._drawRectangle(rectanglePosition);
+      this._drawRectangleShadow(rectanglePosition);
     },
 
     /**
@@ -467,12 +475,9 @@ window.Game = (function() {
     /**
      * Выводит прямоугольник относительно полученных координат
      * @param {Object} rectanglePosition
-     * @param {String} message
      * @private
      */
-    _drawRectangle: function(rectanglePosition, message) {
-      this._drawRectangleShadow(rectanglePosition);
-
+    _drawRectangle: function(rectanglePosition) {
       var ctx = this.ctx;
 
       ctx.beginPath();
@@ -483,8 +488,6 @@ window.Game = (function() {
       ctx.closePath();
       ctx.fillStyle = '#FFFFFF';
       ctx.fill();
-
-      this._drawRectangleText(message, rectanglePosition.x3 - rectanglePosition.x2);
     },
 
     /**
@@ -514,16 +517,16 @@ window.Game = (function() {
     _drawPauseScreen: function() {
       switch (this.state.currentStatus) {
         case Verdict.WIN:
-          this._drawRectangle(this.getPosition(), 'Поздравляем! Вы победили!');
+          this._drawRectangleText('Поздравляем! Вы победили!', this.getPosition());
           break;
         case Verdict.FAIL:
-          this._drawRectangle(this.getPosition(), 'Вы проиграли. Попробуйте еще');
+          this._drawRectangleText('Вы проиграли. Попробуйте еще', this.getPosition());
           break;
         case Verdict.PAUSE:
-          this._drawRectangle(this.getPosition(), 'Игра на паузе');
+          this._drawRectangleText('Игра на паузе', this.getPosition());
           break;
         case Verdict.INTRO:
-          this._drawRectangle(this.getPosition(), 'Добро пожаловать в «Код и магию»! Нажмите пробел для старта');
+          this._drawRectangleText('Добро пожаловать в «Код и магию»! Нажмите пробел для старта', this.getPosition());
           break;
       }
     },
