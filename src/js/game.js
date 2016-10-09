@@ -407,15 +407,15 @@ window.Game = (function() {
     /**
      * Выводит текст
      * @param {String} message
-     * @param {Number} rectangleTopPosition
+     * @param {Number} rectangleWidth
      * @private
      */
-    _drawRectangleText: function(message, rectangleTopPosition) {
+    _drawRectangleText: function(message, rectangleWidth) {
       var ctx = this.ctx;
       var str = message;
       var lineHeight = 22;
-      var positionYStart = rectangleTopPosition + 25;
-      var strLimit = 25;
+      var positionYStart = 75;
+      var strLimit = rectangleWidth >= 380 ? 33 : Math.floor(rectangleWidth / 11.2);
       var counter = Math.ceil(str.length / 25);
       var caretStart = 0;
       var caretEnd = null;
@@ -484,7 +484,7 @@ window.Game = (function() {
       ctx.fillStyle = '#FFFFFF';
       ctx.fill();
 
-      this._drawRectangleText(message, rectanglePosition.y2);
+      this._drawRectangleText(message, rectanglePosition.x3 - rectanglePosition.x2);
     },
 
     /**
