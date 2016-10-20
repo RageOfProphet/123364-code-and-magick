@@ -14,6 +14,40 @@ window.form = (function() {
     onClose: null,
     RATING_PRECINCT: 3,
 
+    initialize: function() {
+      this.setCookie('review-mark');
+      this.setCookie('review-name');
+
+      console.log(this.getCookieExpires());
+    },
+
+    // Устанавливает куки при загрузке страницы
+    setCookie: function(name) {
+      var cookie = Cookies.get(name); // eslint-disable-line
+      if (cookie !== undefined) { // eslint-disable-line
+        var input = formElement.elements[name];
+
+        if (input.length > 1) {
+          input = input[0];
+        }
+
+        switch (input.getAttribute('type')) {
+          case 'text':
+            input.value = cookie;
+            break;
+          case 'radio':
+            document.querySelector('#' + name + '-' + cookie).setAttribute('checked', 'true');
+        }
+      }
+    },
+
+    getCookieExpires: function() {
+      var currentDay = new Date().valueOf();
+      var hooperBirthday = new Date(1992, 11, 9).valueOf();
+
+      return Math.ceil(new Date(currentDay - hooperBirthday).valueOf() / 86400000);
+    },
+
     open: function() {
       formContainer.classList.remove('invisible');
     },
@@ -70,6 +104,9 @@ window.form = (function() {
     // Если поле имени, проверить на числа в строке
     checkName: function(item) {
       if (item.getAttribute('name') === 'review-name') {
+        // Записать в куки
+        Cookies.set('review-name', item.value, { expires: form.getCookieExpires() }); // eslint-disable-line
+
         if (form.hasNumber(item.value)) {
           submitButton.setAttribute('disabled', 'true');
         } else {
@@ -78,7 +115,6 @@ window.form = (function() {
       }
     }
   };
-
 
   formCloseButton.onclick = function(evt) {
     evt.preventDefault();
@@ -90,6 +126,7 @@ window.form = (function() {
     form.open();
   };
 
+  // Обработчик отзывов
   formReviewButtons.onclick = function(evt) {
     var target = evt.target || evt.srcElement;
     var reviewRating = null;
@@ -98,6 +135,9 @@ window.form = (function() {
     // Если нажал на звездочку
     if (target.getAttribute('name') === 'review-mark') {
       reviewRating = +target.value;
+
+      // Записать в куки
+      Cookies.set('review-mark', reviewRating, { expires: form.getCookieExpires() }); // eslint-disable-line
 
       // Если оценка отзыва меньше заданной, сделать поле отзыва обязательным
       if (reviewRating < form.RATING_PRECINCT) {
@@ -119,6 +159,8 @@ window.form = (function() {
       form.removeLabel(target);
     };
   });
+
+  form.initialize();
 
   return form;
 })();
