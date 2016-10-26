@@ -405,21 +405,125 @@ window.Game = (function() {
     },
 
     /**
+     * Выводит текст
+     * @param {String} message
+     * @param {Number} rectangleWidth
+     * @private
+     */
+    _drawRectangleText: function(message, rectangleWidth) {
+      var ctx = this.ctx;
+      var str = message;
+      var lineHeight = 22;
+      var positionYStart = 75;
+      var strLimit = rectangleWidth >= 380 ? 33 : Math.floor(rectangleWidth / 11.2);
+      var counter = Math.ceil(str.length / 25);
+      var caretStart = 0;
+      var caretEnd = null;
+      var currentStr = '';
+
+      ctx.font = '16px PT Mono';
+      ctx.textBaseline = 'hanging';
+      ctx.fillStyle = 'black';
+
+      for (var i = 0; i <= counter; i++) {
+        caretEnd = str.length - caretStart <= strLimit ? str.length : strLimit;
+        currentStr = str.slice(caretStart, caretEnd);
+
+        caretStart = 0;
+        caretEnd = caretEnd === str.length ? caretEnd : currentStr.lastIndexOf(' ');
+        currentStr = currentStr.slice(caretStart, caretEnd);
+        ctx.fillText(currentStr, 335, positionYStart);
+
+        positionYStart += lineHeight;
+        str = str.slice(caretEnd + 1, str.length);
+      }
+    },
+
+    /**
+     * Выводит тень прямоугольника относилтельно координат прямоугольника
+     * @param {Object} rectanglePosition
+     * @private
+     */
+    _drawRectangleShadow: function(rectanglePosition) {
+      var ctx = this.ctx;
+      var shadowPosition = {};
+
+      for (var key in rectanglePosition) {
+        if ({}.hasOwnProperty.call(rectanglePosition, key)) {
+          shadowPosition[key] = rectanglePosition[key] + 10;
+        }
+      }
+
+      ctx.beginPath();
+      ctx.moveTo(shadowPosition.x1, shadowPosition.y1);
+      ctx.lineTo(shadowPosition.x2, shadowPosition.y2);
+      ctx.lineTo(shadowPosition.x3, shadowPosition.y3);
+      ctx.lineTo(shadowPosition.x4, shadowPosition.y4);
+      ctx.closePath();
+      ctx.fillStyle = 'rgba(0, 0, 0, 0.7)';
+      ctx.fill();
+    },
+
+    /**
+     * Выводит прямоугольник относительно полученных координат
+     * @param {Object} rectanglePosition
+     * @param {String} message
+     * @private
+     */
+    _drawRectangle: function(rectanglePosition, message) {
+      this._drawRectangleShadow(rectanglePosition);
+
+      var ctx = this.ctx;
+
+      ctx.beginPath();
+      ctx.moveTo(rectanglePosition.x1, rectanglePosition.y1);
+      ctx.lineTo(rectanglePosition.x2, rectanglePosition.y2);
+      ctx.lineTo(rectanglePosition.x3, rectanglePosition.y3);
+      ctx.lineTo(rectanglePosition.x4, rectanglePosition.y4);
+      ctx.closePath();
+      ctx.fillStyle = '#FFFFFF';
+      ctx.fill();
+
+      this._drawRectangleText(message, rectanglePosition.x3 - rectanglePosition.x2);
+    },
+
+    /**
+     * Считает координаты
+     * @param {Number} positionX
+     * @param {Number} positionY
+     * @returns {Object}
+     */
+    getPosition: function(positionX, positionY) {
+      var x = positionX || 300;
+      var y = positionY || 230;
+      return {
+        x1: x,
+        y1: y,
+        x2: x + 20,
+        y2: y - 180,
+        x3: x + 300,
+        y3: y - 180,
+        x4: x + 300,
+        y4: y - 20
+      };
+    },
+
+    /**
      * Отрисовка экрана паузы.
      */
     _drawPauseScreen: function() {
       switch (this.state.currentStatus) {
         case Verdict.WIN:
-          console.log('you have won!');
+          this._drawRectangle(this.getPosition(), 'Поздравляем! Вы победили!');
           break;
         case Verdict.FAIL:
-          console.log('you have failed!');
+          this._drawRectangle(this.getPosition(), 'Вы проиграли. Попробуйте еще');
           break;
         case Verdict.PAUSE:
-          console.log('game is on pause!');
+          this._drawRectangle(this.getPosition(), 'Игра на паузе');
           break;
         case Verdict.INTRO:
-          console.log('welcome to the game! Press Space to start');
+          this._drawRectangle(this.getPosition(), 'Добро пожаловать в «Код и магию»! Нажмите пробел для старта');
           break;
       }
     },
