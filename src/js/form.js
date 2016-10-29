@@ -227,6 +227,7 @@ window.form = (function() {
     };
   });
 
+  // Запуск настроек по-умолчанию
   form.initialize();
 
   return form;
