@@ -6,23 +6,29 @@ window.form = (function() {
   var formOpenButton = document.querySelector('.reviews-controls-new');
   var formElement = document.forms.reviewForm;
   var formReviewButtons = formElement.querySelector('.review-form-group-mark');
-  var reviewFormFields = formElement.querySelectorAll('.review-form-field');
   var reviewFields = formElement.querySelector('.review-fields');
-  var submitButton = formElement.querySelector('.review-submit');
+  var reviewFormFields = formElement.querySelectorAll('.review-form-field');
 
   var form = {
     onClose: null,
     RATING_PRECINCT: 3,
 
+    /**
+     * Иницилизация фунций при загрузке страницы
+     */
     initialize: function() {
-      this.setCookie('review-mark');
-      this.setCookie('review-name');
+      this.initCookie('review-mark');
+      this.initCookie('review-name');
 
-      console.log(this.getCookieExpires());
+      this.checkReviewField();
+      this.checkRequiredFields();
     },
 
-    // Устанавливает куки при загрузке страницы
-    setCookie: function(name) {
+    /**
+     * Устанавливает куки при загрузке страницы
+     * @param {String} name название куки
+     */
+    initCookie: function(name) {
       var cookie = Cookies.get(name); // eslint-disable-line
       if (cookie !== undefined) { // eslint-disable-line
         var input = formElement.elements[name];
@@ -41,17 +47,32 @@ window.form = (function() {
       }
     },
 
+    /**
+     * Возвращает время куки
+     * @returns {Number}
+     */
     getCookieExpires: function() {
-      var currentDay = new Date().valueOf();
-      var hooperBirthday = new Date(1992, 11, 9).valueOf();
+      var currentDay = new Date();
+      var hooperBirthday = new Date(currentDay.getFullYear(), 11, 9);
 
-      return Math.ceil(new Date(currentDay - hooperBirthday).valueOf() / 86400000);
+      if (hooperBirthday.valueOf() <= currentDay.valueOf()) {
+        return Math.ceil(new Date(currentDay - hooperBirthday).valueOf() / 86400000);
+      }
+
+      var hooperLastBirthDay = new Date(currentDay.getFullYear() - 1, 11, 9);
+      return Math.ceil(new Date(currentDay - hooperLastBirthDay).valueOf() / 86400000);
     },
 
+    /**
+     * Открытие модального окна
+     */
     open: function() {
       formContainer.classList.remove('invisible');
     },
 
+    /**
+     * Закрытие модального окна
+     */
     close: function() {
       formContainer.classList.add('invisible');
 
@@ -60,24 +81,41 @@ window.form = (function() {
       }
     },
 
-    removeLabel: function(input) {
+    /**
+     * Добавление пункта в «Осталось заполнить»
+     * @param {Element} input
+     */
+    addLabel: function(input) {
       var inputId = input.id;
       var label = reviewFields.querySelector('[for="' + inputId + '"]');
 
-      if (input.value.length > 0) {
-        label.classList.add('invisible');
-      } else {
-        label.classList.remove('invisible');
-      }
+      label.classList.remove('invisible');
 
       this.removeLabelList();
     },
 
+    /**
+     * Удаление пункта в поле «Осталось заполнить»
+     * @param {Element} input
+     */
+    removeLabel: function(input) {
+      var inputId = input.id;
+      var label = reviewFields.querySelector('[for="' + inputId + '"]');
+
+      label.classList.add('invisible');
+
+      this.removeLabelList();
+    },
+
+    /**
+     * Скрывает или показывает поле «Осталось заполнить»
+     */
     removeLabelList: function() {
       var flag = true;
+      var reviewFieldsLabel = document.querySelectorAll('.review-fields-label');
 
-      for (var i = 0; i < reviewFormFields.length; i++) {
-        if (reviewFormFields[i].value.length === 0) {
+      for (var i = 0; i < reviewFieldsLabel.length; i++) {
+        if (!reviewFieldsLabel[i].classList.contains('invisible')) {
           flag = false;
 
           break;
@@ -91,46 +129,79 @@ window.form = (function() {
       }
     },
 
-    /*
-    * Проверяет, есть ли в строке числа.
-    * Использую для валидации имени
+    /**
+     * Отключение/включение кнопки отправки данных
+     * @param {Boolean} flag
      */
-    hasNumber: function(str) {
-      return str.split('').some(function(ch) {
-        return +(ch);
-      });
+    disableSubmitButton: function(flag) {
+      var submitButton = formElement.querySelector('.review-submit');
+
+      if (flag) {
+        submitButton.setAttribute('disabled', 'true');
+      } else {
+        submitButton.removeAttribute('disabled');
+      }
     },
 
-    // Если поле имени, проверить на числа в строке
-    checkName: function(item) {
-      if (item.getAttribute('name') === 'review-name') {
-        // Записать в куки
-        Cookies.set('review-name', item.value, { expires: form.getCookieExpires() }); // eslint-disable-line
+    /**
+     * Валидация обязательных полей
+     * Проверка на заполнение
+     */
+    checkRequiredFields: function() {
+      var flag = false;
 
-        if (form.hasNumber(item.value)) {
-          submitButton.setAttribute('disabled', 'true');
-        } else {
-          submitButton.removeAttribute('disabled');
+      for (var i = 0; i < reviewFormFields.length; i++) {
+        if (reviewFormFields[i].hasAttribute('required')) {
+          if (reviewFormFields[i].value.length === 0) {
+            flag = true;
+            this.addLabel(reviewFormFields[i]);
+          } else {
+            this.removeLabel(reviewFormFields[i]);
+          }
         }
+      }
+
+      if (flag) {
+        this.disableSubmitButton(true);
+      } else {
+        this.disableSubmitButton(false);
+      }
+    },
+
+    /**
+     * Делает поле отзыва обязательным/необязательным,
+     * в зависимости от рейтинга
+     */
+    checkReviewField: function() {
+      var rating = formReviewButtons.querySelector('[name="review-mark"]:checked');
+      var reviewField = document.getElementById('review-text');
+
+      if (+rating.value < form.RATING_PRECINCT) {
+        reviewField.setAttribute('required', 'true');
+        this.addLabel(reviewField);
+      } else {
+        reviewField.removeAttribute('required');
+        this.removeLabel(reviewField);
       }
     }
   };
 
+  // Закрытие модального окна
   formCloseButton.onclick = function(evt) {
     evt.preventDefault();
     form.close();
   };
 
+  // Открытие модального окна
   formOpenButton.onclick = function(evt) {
     evt.preventDefault();
     form.open();
   };
 
-  // Обработчик отзывов
+  // Клик на звезды рейтинга
   formReviewButtons.onclick = function(evt) {
     var target = evt.target || evt.srcElement;
     var reviewRating = null;
-    var reviewText = document.getElementById('review-text');
 
     // Если нажал на звездочку
     if (target.getAttribute('name') === 'review-mark') {
@@ -139,24 +210,20 @@ window.form = (function() {
       // Записать в куки
       Cookies.set('review-mark', reviewRating, { expires: form.getCookieExpires() }); // eslint-disable-line
 
-      // Если оценка отзыва меньше заданной, сделать поле отзыва обязательным
-      if (reviewRating < form.RATING_PRECINCT) {
-        reviewText.setAttribute('required', 'true');
-      } else {
-        reviewText.removeAttribute('required');
-      }
+      form.checkReviewField();
+      form.checkRequiredFields();
     }
   };
 
-  // Вешаю обработчик на каждое текстовое поле
+  // Обработчик на инпуты
   reviewFormFields.forEach(function(item) {
-    item.oninput = function(evt) {
-      var target = evt.target;
+    item.oninput = function() {
+      // Если поле имени, записать в куки
+      if (item.getAttribute('name') === 'review-name') {
+        Cookies.set('review-name', item.value, { expires: form.getCookieExpires() }); // eslint-disable-line
+      }
 
-      // Если поле имени, запустить валидацию на числа в строке
-      form.checkName(item);
-
-      form.removeLabel(target);
+      form.checkRequiredFields();
     };
   });
 
