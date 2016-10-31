@@ -5,6 +5,7 @@
   <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=PT+Mono&subset=latin,cyrillic">
   <link rel="stylesheet" href="css/main.css">
   <title>Код и Магия</title>
+  <script src="lib/js-cookie.js"></script>
 </head>
 <body>
 
@@ -67,7 +68,7 @@
 </main>
 
 <div class="overlay-container invisible">
-  <form class="overlay review-form" action="index.html" method="post">
+  <form class="overlay review-form" name="reviewForm" action="index.html" method="post">
     <h2 class="review-form-title">Оставить отзыв</h2>
     <span class="review-form-close">&times;</span>
 
@@ -82,7 +83,7 @@
 
     <fieldset class="review-form-group">
       <label for="review-name" class="review-form-label">Имя</label><br>
-      <input type="text" name="review-name" id="review-name" class="review-form-field review-form-field-name">
+      <input type="text" name="review-name" id="review-name" class="review-form-field review-form-field-name" required>
     </fieldset>
 
     <fieldset class="review-form-group">
