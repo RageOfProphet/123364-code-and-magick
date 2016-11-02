@@ -12,7 +12,25 @@ window.reviewList = (function() {
   var template = document.querySelector('#review-template');
   var templateContainer = 'content' in template ? template.content : template;
 
+  /**
+   * Запуск рендера отзывов
+   * @param {Array} data
+   */
+  window.renderReviews = function(data) {
+    reviewList.render(data);
+  };
+
   var reviewList = {
+    /**
+     * Отправка JSONP запроса
+     * @param {String} url адрес запроса
+     */
+    getReviewsData: function(url) {
+      var script = document.createElement('script');
+      script.src = url + '?callback=renderReviews';
+      document.body.appendChild(script);
+    },
+
     /**
      * Рендер отзывов
      * @param {Array} data массив полученных с сервера данных
@@ -29,21 +47,6 @@ window.reviewList = (function() {
           reviewListElement.appendChild(reviewList.createReview(item));
         });
       }
-    },
-
-    /**
-     * Отправка запроса на сервер и получание массива отзывов
-     * @param {String} url адрес запроса
-     * @param {String} callbackName название функции
-     */
-    getReviewsData: function(url, callbackName) {
-      window[callbackName] = function(data) {
-        reviewList.render(data);
-      };
-
-      var script = document.createElement('script');
-      script.src = url + '?callback=' + callbackName;
-      document.body.appendChild(script);
     },
 
     /**
