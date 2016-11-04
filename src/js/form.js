@@ -1,6 +1,6 @@
 'use strict';
 
-window.form = (function() {
+module.exports = (function() {
   var formContainer = document.querySelector('.overlay-container');
   var formCloseButton = document.querySelector('.review-form-close');
   var formOpenButton = document.querySelector('.reviews-controls-new');
