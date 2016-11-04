@@ -4,33 +4,16 @@
 
 'use strict';
 
-window.reviewList = (function() {
+var load = require('./load');
+
+module.exports = (function() {
   var DATA_URL = 'http://localhost:1507/api/reviews';
-  var JSONP_FUNCTION_NAME = 'getData';
   var IMAGE_LOAD_TIMEOUT = 10000;
 
   var template = document.querySelector('#review-template');
   var templateContainer = 'content' in template ? template.content : template;
 
-  /**
-   * Запуск рендера отзывов
-   * @param {Array} data
-   */
-  window.renderReviews = function(data) {
-    reviewList.render(data);
-  };
-
   var reviewList = {
-    /**
-     * Отправка JSONP запроса
-     * @param {String} url адрес запроса
-     */
-    getReviewsData: function(url) {
-      var script = document.createElement('script');
-      script.src = url + '?callback=renderReviews';
-      document.body.appendChild(script);
-    },
-
     /**
      * Рендер отзывов
      * @param {Array} data массив полученных с сервера данных
@@ -147,7 +130,7 @@ window.reviewList = (function() {
   };
 
   reviewList.hideFilters();
-  reviewList.getReviewsData(DATA_URL, JSONP_FUNCTION_NAME);
+  load(DATA_URL);
 
   return reviewList;
 })();
