@@ -15,6 +15,13 @@ module.exports = (function() {
 
   var reviewList = {
     /**
+     * Загрузка данных по отзывам
+     */
+    loadReviews: function() {
+      load(DATA_URL);
+    },
+
+    /**
      * Рендер отзывов
      * @param {Array} data массив полученных с сервера данных
      */
@@ -128,9 +135,6 @@ module.exports = (function() {
       }, IMAGE_LOAD_TIMEOUT);
     }
   };
-
-  reviewList.hideFilters();
-  load(DATA_URL);
 
   return reviewList;
 })();

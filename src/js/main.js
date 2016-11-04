@@ -27,6 +27,12 @@
   };
 
   /**
+   * Отзывы
+   */
+  reviewList.hideFilters();
+  reviewList.loadReviews();
+
+  /**
    * Запуск рендера отзывов
    * @param {Array} data
    */
