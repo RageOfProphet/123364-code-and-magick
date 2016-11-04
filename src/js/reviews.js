@@ -16,6 +16,7 @@ module.exports = (function() {
      * Загрузка данных по отзывам
      */
     loadReviews: function() {
+      filters.hideFilters();
       load(DATA_URL);
     },
 

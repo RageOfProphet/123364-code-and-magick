@@ -4,7 +4,6 @@
   var Game = require('./game');
   var form = require('./form');
   var reviews = require('./reviews');
-  var filters = require('./filters');
 
   var game = new Game(document.querySelector('.demo'));
 
@@ -30,7 +29,6 @@
   /**
    * Отзывы
    */
-  filters.hideFilters();
   reviews.loadReviews();
 
   /**
