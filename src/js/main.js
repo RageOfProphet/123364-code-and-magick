@@ -3,7 +3,8 @@
 (function() {
   var Game = require('./game');
   var form = require('./form');
-  var reviewList = require('./review');
+  var reviews = require('./reviews');
+  var filters = require('./filters');
 
   var game = new Game(document.querySelector('.demo'));
 
@@ -29,14 +30,14 @@
   /**
    * Отзывы
    */
-  reviewList.hideFilters();
-  reviewList.loadReviews();
+  filters.hideFilters();
+  reviews.loadReviews();
 
   /**
    * Запуск рендера отзывов
    * @param {Array} data
    */
   window.renderReviews = function(data) {
-    reviewList.render(data);
+    reviews.render(data);
   };
 })();

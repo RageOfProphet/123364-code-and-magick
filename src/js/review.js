@@ -4,59 +4,13 @@
 
 'use strict';
 
-var load = require('./load');
-
 module.exports = (function() {
-  var DATA_URL = 'http://localhost:1507/api/reviews';
   var IMAGE_LOAD_TIMEOUT = 10000;
 
   var template = document.querySelector('#review-template');
   var templateContainer = 'content' in template ? template.content : template;
 
-  var reviewList = {
-    /**
-     * Загрузка данных по отзывам
-     */
-    loadReviews: function() {
-      load(DATA_URL);
-    },
-
-    /**
-     * Рендер отзывов
-     * @param {Array} data массив полученных с сервера данных
-     */
-    render: function(data) {
-      var reviews = data;
-
-      if (reviews.length > 0) {
-        this.showFilters();
-
-        var reviewListElement = document.querySelector('.reviews-list');
-
-        reviews.forEach(function(item) {
-          reviewListElement.appendChild(reviewList.createReview(item));
-        });
-      }
-    },
-
-    /**
-     * Скрытие блока с фильтрами
-     */
-    hideFilters: function() {
-      var filters = document.querySelector('.reviews-filter');
-
-      filters.classList.add('invisible');
-    },
-
-    /**
-     * Появление блока с фильтрами
-     */
-    showFilters: function() {
-      var filters = document.querySelector('.reviews-filter');
-
-      filters.classList.remove('invisible');
-    },
-
+  var review = {
     /**
      * Создание отзыва
      * @param {Object} reviewItemData данные по отзыву
@@ -136,5 +90,5 @@ module.exports = (function() {
     }
   };
 
-  return reviewList;
+  return review;
 })();
