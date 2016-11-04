@@ -10,22 +10,56 @@ module.exports = (function() {
   var template = document.querySelector('#review-template');
   var templateContainer = 'content' in template ? template.content : template;
 
-  var review = {
+  var Review = function() {
+    this.data = null;
+    this.element = null;
+  };
+
+  Review.prototype = {
+    /**
+     * Удаление обработчиков
+     */
+    remove: function() {
+      var answerList = this.element.querySelectorAll('.review-quiz-answer');
+
+      Array.prototype.forEach.call(answerList, function(answer) {
+        answer.onclick = null;
+      });
+    },
+
+    /**
+     * Установка обработчиков на варианты ответа
+     */
+    setEvaluationListener: function() {
+      var answerList = this.element.querySelectorAll('.review-quiz-answer');
+
+      Array.prototype.forEach.call(answerList, function(answer) {
+        answer.onclick = function() {
+          Array.prototype.forEach.call(answerList, function(item) {
+            item.classList.remove('review-quiz-answer-active');
+          });
+
+          this.classList.add('review-quiz-answer-active');
+        };
+      });
+    },
+
     /**
      * Создание отзыва
      * @param {Object} reviewItemData данные по отзыву
      * @returns {Element}
      */
     createReview: function(reviewItemData) {
-      var reviewElement = templateContainer.querySelector('.review').cloneNode(true);
-      var reviewText = reviewElement.querySelector('.review-text');
-      var reviewRating = reviewElement.querySelector('.review-rating');
+      this.data = reviewItemData;
+      this.element = templateContainer.querySelector('.review').cloneNode(true);
+      var reviewText = this.element.querySelector('.review-text');
+      var reviewRating = this.element.querySelector('.review-rating');
 
-      this.fillImage(reviewElement, reviewItemData);
-      reviewRating.classList.add(this.getRatingClass(reviewItemData.rating));
-      reviewText.textContent = reviewItemData.description;
+      this.fillImage();
+      reviewRating.classList.add(this.getRatingClass(this.data.rating));
+      reviewText.textContent = this.data.description;
 
-      return reviewElement;
+      return this.element;
     },
 
     /**
@@ -61,34 +95,32 @@ module.exports = (function() {
 
     /**
      * Заполнение картинки
-     * @param {Element} reviewContainer контейнер с отзывом
-     * @param {Object} reviewData данные с сервера
-     * @returns {Element}
      */
-    fillImage: function(reviewContainer, reviewData) {
+    fillImage: function() {
       var image = new Image(124, 124);
       var imageTimeout = null;
-      var reviewImage = reviewContainer.querySelector('.review-author');
+      var reviewImage = this.element.querySelector('.review-author');
+      var self = this;
 
       image.onload = function() {
         clearTimeout(imageTimeout);
-        reviewImage.src = reviewData.author.picture;
+        reviewImage.src = self.data.author.picture;
       };
 
       image.onerror = function() {
-        reviewContainer.classList.add('review-load-failure');
+        self.element.classList.add('review-load-failure');
       };
 
-      image.src = reviewData.author.picture;
-      reviewImage.alt = reviewData.author.name;
-      reviewImage.title = reviewData.author.name;
+      image.src = this.data.author.picture;
+      reviewImage.alt = this.data.author.name;
+      reviewImage.title = this.data.author.name;
 
       imageTimeout = setTimeout(function() {
         image.src = '';
-        reviewContainer.classList.add('review-load-failure');
+        self.element.classList.add('review-load-failure');
       }, IMAGE_LOAD_TIMEOUT);
     }
   };
 
-  return review;
+  return Review;
 })();

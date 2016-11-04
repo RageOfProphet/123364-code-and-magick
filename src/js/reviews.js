@@ -5,7 +5,7 @@
 'use strict';
 
 var load = require('./load');
-var review = require('./review');
+var Review = require('./review');
 var filters = require('./filters');
 
 module.exports = (function() {
@@ -31,7 +31,9 @@ module.exports = (function() {
         var reviewListElement = document.querySelector('.reviews-list');
 
         data.forEach(function(item) {
+          var review = new Review();
           reviewListElement.appendChild(review.createReview(item));
+          review.setEvaluationListener();
         });
       }
     }
