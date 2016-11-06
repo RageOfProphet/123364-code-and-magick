@@ -10,9 +10,39 @@ module.exports = (function() {
   var template = document.querySelector('#review-template');
   var templateContainer = 'content' in template ? template.content : template;
 
-  var Review = function() {
-    this.data = null;
-    this.element = null;
+  var Review = function(reviewItemData) {
+    var self = this;
+
+    this.data = reviewItemData;
+    this.element = templateContainer.querySelector('.review').cloneNode(true);
+
+    var reviewText = this.element.querySelector('.review-text');
+    var reviewRating = this.element.querySelector('.review-rating');
+
+    this.fillImage();
+    reviewRating.classList.add(this.getRatingClass(this.data.rating));
+    reviewText.textContent = this.data.description;
+
+    /**
+     * Установка обработчиков на варианты ответа
+     */
+    var setEvaluationListener = function() {
+      var answerList = self.element.querySelectorAll('.review-quiz-answer');
+
+      Array.prototype.forEach.call(answerList, function(answer) {
+        answer.onclick = function() {
+          Array.prototype.forEach.call(answerList, function(item) {
+            item.classList.remove('review-quiz-answer-active');
+          });
+
+          this.classList.add('review-quiz-answer-active');
+        };
+      });
+    };
+
+    setEvaluationListener();
+
+    return this.element;
   };
 
   Review.prototype = {
@@ -25,41 +55,6 @@ module.exports = (function() {
       Array.prototype.forEach.call(answerList, function(answer) {
         answer.onclick = null;
       });
-    },
-
-    /**
-     * Установка обработчиков на варианты ответа
-     */
-    setEvaluationListener: function() {
-      var answerList = this.element.querySelectorAll('.review-quiz-answer');
-
-      Array.prototype.forEach.call(answerList, function(answer) {
-        answer.onclick = function() {
-          Array.prototype.forEach.call(answerList, function(item) {
-            item.classList.remove('review-quiz-answer-active');
-          });
-
-          this.classList.add('review-quiz-answer-active');
-        };
-      });
-    },
-
-    /**
-     * Создание отзыва
-     * @param {Object} reviewItemData данные по отзыву
-     * @returns {Element}
-     */
-    createReview: function(reviewItemData) {
-      this.data = reviewItemData;
-      this.element = templateContainer.querySelector('.review').cloneNode(true);
-      var reviewText = this.element.querySelector('.review-text');
-      var reviewRating = this.element.querySelector('.review-rating');
-
-      this.fillImage();
-      reviewRating.classList.add(this.getRatingClass(this.data.rating));
-      reviewText.textContent = this.data.description;
-
-      return this.element;
     },
 
     /**

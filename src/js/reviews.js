@@ -31,9 +31,8 @@ module.exports = (function() {
         var reviewListElement = document.querySelector('.reviews-list');
 
         data.forEach(function(item) {
-          var review = new Review();
-          reviewListElement.appendChild(review.createReview(item));
-          review.setEvaluationListener();
+          var review = new Review(item);
+          reviewListElement.appendChild(review);
         });
       }
     }
