@@ -10,6 +10,7 @@
 
   game.initializeLevelAndStart();
   game.setGameStatus(Game.Verdict.INTRO);
+  game.parallax();
 
   var formOpenButton = document.querySelector('.reviews-controls-new');
 
@@ -30,15 +31,15 @@
   /**
    * Отзывы
    */
-  reviews.loadReviews();
-
-  /**
-   * Запуск рендера отзывов
-   * @param {Array} data
-   */
-  window.renderReviews = function(data) {
-    reviews.render(data);
-  };
+  // reviews.loadReviews();
+  //
+  // /**
+  //  * Запуск рендера отзывов
+  //  * @param {Array} data
+  //  */
+  // window.renderReviews = function(data) {
+  //   reviews.render(data);
+  // };
 
   /**
    * Галерея

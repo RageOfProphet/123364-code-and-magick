@@ -387,6 +387,34 @@ module.exports = (function() {
       this._drawPauseScreen();
     },
 
+    // Параллакс
+    /*
+    * Добавьте обработчик события 'scroll' для объекта window,
+    * который должен выполнять следующие действия:
+    *
+    * В зависимости от положения прокрутки смещать положение блока
+    * с облаками .header-clouds(например с помощью изменения Element.style.backgroundPosition).
+    *
+    * Добавьте, оптимизированную с помощью таймаута, который срабатывает не чаще,
+    * чем раз в 100 миллисекунд (throttle), проверку, виден ли блок с облаками
+    * и если нет — отмените смещение облаков при прокрутке.
+    *
+    * Доработайте предыдущую проверку. Добавьте проверку видимости блока с игрой .demo.
+    * Если игра не видна — поставьте игру на паузу, вызвав метод
+    * game.setGameStatus(verdict:Verdict);, передав ему Game.Verdict.PAUSE
+    * */
+
+    parallax: function() {
+      var clouds = document.querySelector('.header-clouds');
+      clouds.style.backgroundPositionX = 0 + 'px';
+
+      window.addEventListener('scroll', function() {
+        setTimeout(function() {
+          clouds.style.backgroundPositionX = pageYOffset * -1 + 'px';
+        }, 100);
+      });
+    },
+
     /**
      * Обработчик событий клавиатуры во время паузы.
      * @param {KeyboardsEvent} evt
