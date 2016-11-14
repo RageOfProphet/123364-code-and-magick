@@ -4,11 +4,6 @@
 
 'use strict';
 
-var getPage = require('../../bin/data/get-page');
-var filter = require('../../bin/data/filter');
-
-var moreReviewsBtn = document.querySelector('.reviews-controls-more');
-
 /**
  * Отправка XMLHttpRequest запроса
  * @param {String} url адрес запроса
@@ -17,26 +12,16 @@ var moreReviewsBtn = document.querySelector('.reviews-controls-more');
  */
 module.exports = function(url, params, callback) {
   var xhr = new XMLHttpRequest();
+  var urlArray = [];
 
-  xhr.open('GET', url + '?' + JSON.stringify(params));
+  Object.keys(params).forEach(function(key) {
+    urlArray.push([key + '=' + params[key]]);
+  });
+
+  xhr.open('GET', url + '?' + urlArray.join('&'));
 
   xhr.onload = function(e) {
-    var request = JSON.parse(e.currentTarget.response);
-
-    // Фильтрация отзыва
-    var filteredList = filter(request, params.filter);
-
-    // Если есть еще отзывы, показать кнопку «Ещё отзывы»
-    if (filteredList.length > params.to) {
-      moreReviewsBtn.classList.remove('invisible');
-    } else {
-      moreReviewsBtn.classList.add('invisible');
-    }
-
-    // Получение нужной страницы
-    var data = getPage(filteredList, params.from, params.to);
-
-    callback(data);
+    callback(JSON.parse(e.currentTarget.response));
   };
 
   xhr.onerror = function() {

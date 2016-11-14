@@ -7,9 +7,13 @@
 var load = require('./load');
 var Review = require('./review');
 var filters = require('./filters');
+var getPage = require('../../bin/data/get-page');
+var filter = require('../../bin/data/filter');
 
 module.exports = (function() {
-  var DATA_URL = 'http://localhost:1507/api/reviews';
+  var DATA_URL = '/api/reviews';
+
+  var moreReviewsBtn = document.querySelector('.reviews-controls-more');
 
   var paramsToLoad = {
     from: 0,
@@ -41,6 +45,8 @@ module.exports = (function() {
           var review = new Review(item);
           reviewListElement.appendChild(review);
         });
+      } else {
+        moreReviewsBtn.classList.add('invisible');
       }
     },
 
@@ -60,8 +66,6 @@ module.exports = (function() {
    * Событие загрузки отзывов
    * @type {Element}
    */
-  var moreReviewsBtn = document.querySelector('.reviews-controls-more');
-
   moreReviewsBtn.addEventListener('click', function() {
     var pageDifference = paramsToLoad.to - paramsToLoad.from;
 
