@@ -10,12 +10,13 @@ var filters = require('./filters');
 
 module.exports = (function() {
   var DATA_URL = '/api/reviews';
+  var PAGE_LIMIT = 3;
 
   var moreReviewsBtn = document.querySelector('.reviews-controls-more');
 
   var paramsToLoad = {
     from: 0,
-    to: 3,
+    to: PAGE_LIMIT,
     filter: 'reviews-all'
   };
 
@@ -85,6 +86,8 @@ module.exports = (function() {
     if (target.name === 'reviews') {
       reviews.remove();
 
+      paramsToLoad.from = 0;
+      paramsToLoad.to = PAGE_LIMIT;
       paramsToLoad.filter = target.id;
       load('/api/reviews', paramsToLoad, reviews.render);
     }
