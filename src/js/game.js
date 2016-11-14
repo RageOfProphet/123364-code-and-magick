@@ -398,12 +398,17 @@ module.exports = (function() {
       var demo = document.querySelector('.demo');
       var _this = this;
 
+      // Двигает облака
       function moveClouds() {
         clouds.style.backgroundPositionX = pageYOffset * -1 + 'px';
 
         checkGamePosition();
       }
 
+      /*
+      * Проверка позиции демки.
+      * Если вне зоны видимости, ставим на паузу
+      * */
       function checkGamePosition() {
         if (demo.getBoundingClientRect().bottom <= 0) {
           _this.setGameStatus(Game.Verdict.PAUSE);
