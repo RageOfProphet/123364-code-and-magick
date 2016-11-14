@@ -31,15 +31,15 @@
   /**
    * Отзывы
    */
-  // reviews.loadReviews();
-  //
-  // /**
-  //  * Запуск рендера отзывов
-  //  * @param {Array} data
-  //  */
-  // window.renderReviews = function(data) {
-  //   reviews.render(data);
-  // };
+  reviews.loadReviews();
+
+  /**
+   * Запуск рендера отзывов
+   * @param {Array} data
+   */
+  window.renderReviews = function(data) {
+    reviews.render(data);
+  };
 
   /**
    * Галерея
