@@ -35,6 +35,12 @@ module.exports = (function() {
      * @param {Array} data массив полученных с сервера данных
      */
     render: function(data) {
+      if (data.length === PAGE_LIMIT) {
+        moreReviewsBtn.classList.remove('invisible');
+      } else {
+        moreReviewsBtn.classList.add('invisible');
+      }
+
       if (data.length > 0) {
         filters.showFilters();
 
@@ -44,8 +50,6 @@ module.exports = (function() {
           var review = new Review(item);
           reviewListElement.appendChild(review);
         });
-      } else {
-        moreReviewsBtn.classList.add('invisible');
       }
     },
 
