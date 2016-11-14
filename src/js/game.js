@@ -1,5 +1,7 @@
 'use strict';
 
+var throttle = require('../lib/throttle');
+
 module.exports = (function() {
   /**
    * @const
@@ -393,20 +395,25 @@ module.exports = (function() {
     parallax: function() {
       var clouds = document.querySelector('.header-clouds');
       clouds.style.backgroundPositionX = 0 + 'px';
-      var lastCall = Date.now();
       var demo = document.querySelector('.demo');
       var _this = this;
 
-      window.addEventListener('scroll', function() {
-        if (Date.now() - lastCall >= 100) {
-          clouds.style.backgroundPositionX = pageYOffset * -1 + 'px';
+      function moveClouds() {
+        clouds.style.backgroundPositionX = pageYOffset * -1 + 'px';
 
-          if (demo.getBoundingClientRect().bottom <= 0) {
-            _this.setGameStatus(Game.Verdict.PAUSE);
-          }
+        checkGamePosition();
+      }
 
-          lastCall = Date.now();
+      function checkGamePosition() {
+        if (demo.getBoundingClientRect().bottom <= 0) {
+          _this.setGameStatus(Game.Verdict.PAUSE);
         }
+      }
+
+      var throttled = throttle(moveClouds, 100);
+
+      window.addEventListener('scroll', function() {
+        throttled();
       });
     },
 
