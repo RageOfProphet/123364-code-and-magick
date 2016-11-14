@@ -7,8 +7,6 @@
 var load = require('./load');
 var Review = require('./review');
 var filters = require('./filters');
-var getPage = require('../../bin/data/get-page');
-var filter = require('../../bin/data/filter');
 
 module.exports = (function() {
   var DATA_URL = '/api/reviews';
