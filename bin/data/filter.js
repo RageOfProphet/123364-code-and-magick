@@ -15,7 +15,6 @@ module.exports = function(list, filterID) {
     * */
     case 'reviews-all':
       return list;
-      break;
     /*
     * reviews-recent, недавние — список отзывов, сделанных
     * за последние три дня, отсортированный по убыванию даты (поле created)
@@ -29,7 +28,6 @@ module.exports = function(list, filterID) {
       }).sort(function(a, b) {
         return b.created - a.created;
       });
-      break;
     /*
     * reviews-good, хорошие — список отзывов с оценкой не ниже 3,
     * отсортированный по убыванию оценки (поле rating)
@@ -40,7 +38,6 @@ module.exports = function(list, filterID) {
       }).sort(function(a, b) {
         return b.rating - a.rating;
       });
-      break;
     /*
     * reviews-bad, плохие — список отзывов с оценкой ниже 3,
     * отсортированный по возрастанию оценки (поле rating)
@@ -51,7 +48,6 @@ module.exports = function(list, filterID) {
       }).sort(function(a, b) {
         return a.rating - b.rating;
       });
-      break;
     /*
     * reviews-popular, популярные — список отзывов, отсортированный
     * по убыванию полезности отзыва (поле review_usefulness)
@@ -60,7 +56,6 @@ module.exports = function(list, filterID) {
       return list.sort(function(a, b) {
         return b.review_usefulness - a.review_usefulness;
       });
-      break;
     default:
       break;
   }

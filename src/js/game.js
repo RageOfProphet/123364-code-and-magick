@@ -388,6 +388,29 @@ module.exports = (function() {
     },
 
     /**
+     * Параллакс
+     */
+    parallax: function() {
+      var clouds = document.querySelector('.header-clouds');
+      clouds.style.backgroundPositionX = 0 + 'px';
+      var lastCall = Date.now();
+      var demo = document.querySelector('.demo');
+      var _this = this;
+
+      window.addEventListener('scroll', function() {
+        if (Date.now() - lastCall >= 100) {
+          clouds.style.backgroundPositionX = pageYOffset * -1 + 'px';
+
+          if (demo.getBoundingClientRect().bottom <= 0) {
+            _this.setGameStatus(Game.Verdict.PAUSE);
+          }
+
+          lastCall = Date.now();
+        }
+      });
+    },
+
+    /**
      * Обработчик событий клавиатуры во время паузы.
      * @param {KeyboardsEvent} evt
      * @private

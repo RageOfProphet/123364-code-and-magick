@@ -10,6 +10,7 @@
 
   game.initializeLevelAndStart();
   game.setGameStatus(Game.Verdict.INTRO);
+  game.parallax();
 
   var formOpenButton = document.querySelector('.reviews-controls-new');
 
