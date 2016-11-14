@@ -9,7 +9,16 @@ var Review = require('./review');
 var filters = require('./filters');
 
 module.exports = (function() {
-  var DATA_URL = 'http://localhost:1507/api/reviews';
+  var DATA_URL = '/api/reviews';
+  var PAGE_LIMIT = 3;
+
+  var moreReviewsBtn = document.querySelector('.reviews-controls-more');
+
+  var paramsToLoad = {
+    from: 0,
+    to: PAGE_LIMIT,
+    filter: 'reviews-all'
+  };
 
   var reviews = {
     /**
@@ -17,7 +26,8 @@ module.exports = (function() {
      */
     loadReviews: function() {
       filters.hideFilters();
-      load(DATA_URL);
+
+      load(DATA_URL, paramsToLoad, this.render);
     },
 
     /**
@@ -25,6 +35,12 @@ module.exports = (function() {
      * @param {Array} data массив полученных с сервера данных
      */
     render: function(data) {
+      if (data.length === PAGE_LIMIT) {
+        moreReviewsBtn.classList.remove('invisible');
+      } else {
+        moreReviewsBtn.classList.add('invisible');
+      }
+
       if (data.length > 0) {
         filters.showFilters();
 
@@ -35,8 +51,51 @@ module.exports = (function() {
           reviewListElement.appendChild(review);
         });
       }
+    },
+
+    /**
+     * Удаление списка отзывов
+     */
+    remove: function() {
+      var reviewListElement = document.querySelector('.reviews-list');
+
+      reviewListElement.innerHTML = '';
+
+      paramsToLoad.from = 0;
     }
   };
+
+  /**
+   * Событие загрузки отзывов
+   * @type {Element}
+   */
+  moreReviewsBtn.addEventListener('click', function() {
+    var pageDifference = paramsToLoad.to - paramsToLoad.from;
+
+    paramsToLoad.from += pageDifference;
+    paramsToLoad.to += pageDifference;
+
+    load('/api/reviews', paramsToLoad, reviews.render);
+  });
+
+  /**
+   * Событие фильтрации
+   * @type {Element}
+   */
+  var filterList = document.querySelector('.reviews-filter');
+
+  filterList.addEventListener('change', function(e) {
+    var target = e.target;
+
+    if (target.name === 'reviews') {
+      reviews.remove();
+
+      paramsToLoad.from = 0;
+      paramsToLoad.to = PAGE_LIMIT;
+      paramsToLoad.filter = target.id;
+      load('/api/reviews', paramsToLoad, reviews.render);
+    }
+  }, true);
 
   return reviews;
 })();
