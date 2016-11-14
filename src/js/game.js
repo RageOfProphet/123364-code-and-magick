@@ -393,7 +393,6 @@ module.exports = (function() {
     parallax: function() {
       var clouds = document.querySelector('.header-clouds');
       clouds.style.backgroundPositionX = 0 + 'px';
-      
       var lastCall = Date.now();
       var demo = document.querySelector('.demo');
       var _this = this;
