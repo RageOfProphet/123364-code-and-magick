@@ -22,6 +22,12 @@ module.exports = (function() {
       var filterList = document.querySelector('.reviews-filter');
 
       filterList.classList.remove('invisible');
+    },
+
+    setCurrentFilter: function() {
+      if (localStorage.getItem('filter')) {
+        document.querySelector('#' + localStorage.getItem('filter')).checked = true;
+      }
     }
   };
 
