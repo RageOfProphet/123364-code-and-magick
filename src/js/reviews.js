@@ -68,7 +68,7 @@ module.exports = (function() {
 
         data.forEach(function(item) {
           var review = new Review(item);
-          this.el.appendChild(review);
+          this.el.appendChild(review.render());
         }.bind(this));
       }
     },
