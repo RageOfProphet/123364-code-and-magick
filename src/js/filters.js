@@ -5,7 +5,9 @@
 'use strict';
 
 module.exports = (function() {
-  var filters = {
+  var Filters = function() {};
+
+  Filters.prototype = {
     /**
      * Скрытие блока с фильтрами
      */
@@ -31,5 +33,5 @@ module.exports = (function() {
     }
   };
 
-  return filters;
+  return Filters;
 })();

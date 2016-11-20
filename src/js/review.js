@@ -11,8 +11,6 @@ module.exports = (function() {
   var templateContainer = 'content' in template ? template.content : template;
 
   var Review = function(reviewItemData) {
-    var self = this;
-
     this.data = reviewItemData;
     this.element = templateContainer.querySelector('.review').cloneNode(true);
 
@@ -27,7 +25,7 @@ module.exports = (function() {
      * Установка обработчиков на варианты ответа
      */
     var setEvaluationListener = function() {
-      var answerList = self.element.querySelectorAll('.review-quiz-answer');
+      var answerList = this.element.querySelectorAll('.review-quiz-answer');
 
       Array.prototype.forEach.call(answerList, function(answer) {
         answer.onclick = function() {
@@ -38,7 +36,7 @@ module.exports = (function() {
           this.classList.add('review-quiz-answer-active');
         };
       });
-    };
+    }.bind(this);
 
     setEvaluationListener();
 
