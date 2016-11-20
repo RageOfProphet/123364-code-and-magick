@@ -7,6 +7,8 @@
 var load = require('./load');
 var Review = require('./review');
 var Filters = require('./filters');
+var BaseComponent = require('./baseComponent');
+var assign = require('./assign');
 
 var filters = new Filters();
 
@@ -23,6 +25,12 @@ module.exports = (function() {
       to: this.PAGE_LIMIT,
       filter: 'reviews-all'
     };
+
+    // Наследование класса ДОМ-компоненты
+    var reviewListElement = document.querySelector('.reviews-list');
+
+    BaseComponent.call(this, reviewListElement);
+    assign(Reviews, BaseComponent);
   };
 
   Reviews.prototype = {
@@ -58,12 +66,10 @@ module.exports = (function() {
 
         filters.setCurrentFilter();
 
-        var reviewListElement = document.querySelector('.reviews-list');
-
         data.forEach(function(item) {
           var review = new Review(item);
-          reviewListElement.appendChild(review);
-        });
+          this.el.appendChild(review);
+        }.bind(this));
       }
     },
 
@@ -71,10 +77,7 @@ module.exports = (function() {
      * Удаление списка отзывов
      */
     remove: function() {
-      var reviewListElement = document.querySelector('.reviews-list');
-
-      reviewListElement.innerHTML = '';
-
+      this.el.innerHTML = '';
       this.paramsToLoad.from = 0;
     },
 
