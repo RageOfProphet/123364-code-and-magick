@@ -16,6 +16,8 @@ module.exports = (function() {
   var Review = function(reviewItemData) {
     this.element = templateContainer.querySelector('.review').cloneNode(true);
 
+    this.answerList = this.element.querySelectorAll('.review-quiz-answer');
+
     ReviewsData.call(this, reviewItemData);
   };
 
@@ -38,17 +40,22 @@ module.exports = (function() {
    * Установка обработчиков на варианты ответа
    */
   Review.prototype.setEvaluationListener = function() {
-    var answerList = this.element.querySelectorAll('.review-quiz-answer');
+    Array.prototype.forEach.call(this.answerList, function(answer) {
+      answer.addEventListener('click', this._onClick.bind(this));
+    }.bind(this));
+  };
 
-    Array.prototype.forEach.call(answerList, function(answer) {
-      answer.onclick = function() {
-        Array.prototype.forEach.call(answerList, function(item) {
-          item.classList.remove('review-quiz-answer-active');
-        });
-
-        this.classList.add('review-quiz-answer-active');
-      };
+  /**
+   * Обработчик клика
+   * @param e - нажатый элемент
+   * @private
+   */
+  Review.prototype._onClick = function(e) {
+    Array.prototype.forEach.call(this.answerList, function(item) {
+      item.classList.remove('review-quiz-answer-active');
     });
+
+    e.target.classList.add('review-quiz-answer-active');
   };
 
   /**

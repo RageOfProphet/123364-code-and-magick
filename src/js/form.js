@@ -191,35 +191,56 @@ module.exports = (function() {
       }
     },
 
+    /**
+     * Обработчик клика на кнопку закрытия формы
+     * @param e - нажатый элемент
+     * @private
+     */
+    _onClickCloseButton: function(e) {
+      e.preventDefault();
+      this.close();
+    },
+
+    /**
+     * Обработчик клика на кнопку открытия формы
+     * @param e - нажатый элемент
+     * @private
+     */
+    _onClickOpenButton: function(e) {
+      e.preventDefault();
+      this.open();
+    },
+
+    /**
+     * Обработчик клика на кнопки рейтинга отзыва
+     * @param e - нажатый элемент
+     * @private
+     */
+    _onClickReviewButtons: function(e) {
+      var target = e.target || e.srcElement;
+      var reviewRating = null;
+
+      // Если нажал на звездочку
+      if (target.getAttribute('name') === 'review-mark') {
+        reviewRating = +target.value;
+
+        // Записать в куки
+        Cookies.set('review-mark', reviewRating, { expires: this.getCookieExpires() }); // eslint-disable-line
+
+        this.checkReviewField();
+        this.checkRequiredFields();
+      }
+    },
+
     _initializeFormListeners: function() {
       // Закрытие модального окна
-      formCloseButton.onclick = function(evt) {
-        evt.preventDefault();
-        this.close();
-      }.bind(this);
+      formCloseButton.addEventListener('click', this._onClickCloseButton.bind(this));
 
       // Открытие модального окна
-      formOpenButton.onclick = function(evt) {
-        evt.preventDefault();
-        this.open();
-      }.bind(this);
+      formOpenButton.addEventListener('click', this._onClickOpenButton.bind(this));
 
       // Клик на звезды рейтинга
-      formReviewButtons.onclick = function(evt) {
-        var target = evt.target || evt.srcElement;
-        var reviewRating = null;
-
-        // Если нажал на звездочку
-        if (target.getAttribute('name') === 'review-mark') {
-          reviewRating = +target.value;
-
-          // Записать в куки
-          Cookies.set('review-mark', reviewRating, { expires: this.getCookieExpires() }); // eslint-disable-line
-
-          this.checkReviewField();
-          this.checkRequiredFields();
-        }
-      }.bind(this);
+      formReviewButtons.addEventListener('click', this._onClickReviewButtons.bind(this));
 
       // Обработчик на инпуты
       reviewFormFields.forEach(function(item) {
