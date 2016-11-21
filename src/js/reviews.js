@@ -114,7 +114,10 @@ module.exports = (function() {
     }
   };
 
-  /** @private */
+  /**
+   * Инициализация обработчиков
+   * @private
+   * */
   Reviews.prototype._initializeReviewsListeners = function() {
     this.moreReviewsBtn.addEventListener('click', this._onClick.bind(this));
     this.filterList.addEventListener('change', this._onChange.bind(this), true);
