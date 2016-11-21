@@ -15,35 +15,35 @@ var ReviewData = function(data) {
 
 ReviewData.prototype = {
   /**
-   * Возвращает строку запрашиваемых данных
-   * @param {String|Object} item - запрашиваемые данные
+   * Возвращает рейтинг отзыва
    * @returns {String}
    */
-  getContent: function(item) {
-    var result = this.data;
+  getRating: function() {
+    return this.data.rating;
+  },
 
-    switch (typeof item) {
-      case 'string':
-      case 'number': {
-        result = this.data[item];
+  /**
+   * Возвращает контент отзыва
+   * @returns {String}
+   */
+  getDescription: function() {
+    return this.data.description;
+  },
 
-        break;
-      }
-      case 'object': {
-        if (Array.isArray(item)) {
-          item.forEach(function(key) {
-            result = result[key];
-          });
-        }
+  /**
+   * Возвращает аватар автора отзыва
+   * @returns {String}
+   */
+  getAuthorAvatar: function() {
+    return this.data.author.picture;
+  },
 
-        break;
-      }
-      default: {
-        break;
-      }
-    }
-
-    return result;
+  /**
+   * Возвращает имя автора отзыва
+   * @returns {String}
+   */
+  getAuthorName: function() {
+    return this.data.author.name;
   }
 };
 

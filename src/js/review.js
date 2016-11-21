@@ -28,8 +28,8 @@ module.exports = (function() {
     var reviewRating = this.element.querySelector('.review-rating');
 
     this.fillImage();
-    reviewRating.classList.add(this.getRatingClass(this.getContent('rating')));
-    reviewText.textContent = this.getContent('description');
+    reviewRating.classList.add(this.getRatingClass(this.getRating()));
+    reviewText.textContent = this.getDescription();
 
     this.setEvaluationListener();
 
@@ -110,16 +110,16 @@ module.exports = (function() {
 
     image.onload = function() {
       clearTimeout(imageTimeout);
-      reviewImage.src = this.getContent(['author', 'picture']);
+      reviewImage.src = this.getAuthorAvatar();
     }.bind(this);
 
     image.onerror = function() {
       this.element.classList.add('review-load-failure');
     }.bind(this);
 
-    image.src = this.getContent(['author', 'picture']);
-    reviewImage.alt = this.getContent(['author', 'name']);
-    reviewImage.title = this.getContent(['author', 'name']);
+    image.src = this.getAuthorAvatar();
+    reviewImage.alt = this.getAuthorName();
+    reviewImage.title = this.getAuthorName();
 
     imageTimeout = setTimeout(function() {
       image.src = '';
