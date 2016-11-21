@@ -2,10 +2,11 @@
 
 (function() {
   var Game = require('./game');
-  var form = require('./form');
-  var reviews = require('./reviews');
+  var Form = require('./form');
+  var Reviews = require('./reviews');
   var Gallery = require('./gallery');
 
+  var form = new Form();
   var game = new Game(document.querySelector('.demo'));
 
   game.initializeLevelAndStart();
@@ -31,15 +32,8 @@
   /**
    * Отзывы
    */
+  var reviews = new Reviews();
   reviews.loadReviews();
-
-  /**
-   * Запуск рендера отзывов
-   * @param {Array} data
-   */
-  window.renderReviews = function(data) {
-    reviews.render(data);
-  };
 
   /**
    * Галерея

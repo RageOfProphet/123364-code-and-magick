@@ -9,10 +9,14 @@ module.exports = (function() {
   var reviewFields = formElement.querySelector('.review-fields');
   var reviewFormFields = formElement.querySelectorAll('.review-form-field');
 
-  var form = {
-    onClose: null,
-    RATING_PRECINCT: 3,
+  var Form = function() {
+    this.onClose = null;
+    this.RATING_PRECINCT = 3;
 
+    this.initialize();
+  };
+
+  Form.prototype = {
     /**
      * Иницилизация фунций при загрузке страницы
      */
@@ -22,6 +26,8 @@ module.exports = (function() {
 
       this.checkReviewField();
       this.checkRequiredFields();
+
+      this._initializeFormListeners();
     },
 
     /**
@@ -176,59 +182,82 @@ module.exports = (function() {
       var rating = formReviewButtons.querySelector('[name="review-mark"]:checked');
       var reviewField = document.getElementById('review-text');
 
-      if (+rating.value < form.RATING_PRECINCT) {
+      if (+rating.value < this.RATING_PRECINCT) {
         reviewField.setAttribute('required', 'true');
         this.addLabel(reviewField);
       } else {
         reviewField.removeAttribute('required');
         this.removeLabel(reviewField);
       }
-    }
-  };
+    },
 
-  // Закрытие модального окна
-  formCloseButton.onclick = function(evt) {
-    evt.preventDefault();
-    form.close();
-  };
+    /**
+     * Обработчик клика на кнопку закрытия формы
+     * @param e - нажатый элемент
+     * @private
+     */
+    _onClickCloseButton: function(e) {
+      e.preventDefault();
+      this.close();
+    },
 
-  // Открытие модального окна
-  formOpenButton.onclick = function(evt) {
-    evt.preventDefault();
-    form.open();
-  };
+    /**
+     * Обработчик клика на кнопку открытия формы
+     * @param e - нажатый элемент
+     * @private
+     */
+    _onClickOpenButton: function(e) {
+      e.preventDefault();
+      this.open();
+    },
 
-  // Клик на звезды рейтинга
-  formReviewButtons.onclick = function(evt) {
-    var target = evt.target || evt.srcElement;
-    var reviewRating = null;
+    /**
+     * Обработчик клика на кнопки рейтинга отзыва
+     * @param e - нажатый элемент
+     * @private
+     */
+    _onClickReviewButtons: function(e) {
+      var target = e.target || e.srcElement;
+      var reviewRating = null;
 
-    // Если нажал на звездочку
-    if (target.getAttribute('name') === 'review-mark') {
-      reviewRating = +target.value;
+      // Если нажал на звездочку
+      if (target.getAttribute('name') === 'review-mark') {
+        reviewRating = +target.value;
 
-      // Записать в куки
-      Cookies.set('review-mark', reviewRating, { expires: form.getCookieExpires() }); // eslint-disable-line
+        // Записать в куки
+        Cookies.set('review-mark', reviewRating, { expires: this.getCookieExpires() }); // eslint-disable-line
 
-      form.checkReviewField();
-      form.checkRequiredFields();
-    }
-  };
+        this.checkReviewField();
+        this.checkRequiredFields();
+      }
+    },
 
-  // Обработчик на инпуты
-  reviewFormFields.forEach(function(item) {
-    item.oninput = function() {
+    _initializeFormListeners: function() {
+      // Закрытие модального окна
+      formCloseButton.addEventListener('click', this._onClickCloseButton.bind(this));
+
+      // Открытие модального окна
+      formOpenButton.addEventListener('click', this._onClickOpenButton.bind(this));
+
+      // Клик на звезды рейтинга
+      formReviewButtons.addEventListener('click', this._onClickReviewButtons.bind(this));
+
+      // Обработчик на инпуты
+      reviewFormFields.forEach(function(item) {
+        item.addEventListener('input', this._onInput.bind(this));
+      }.bind(this));
+    },
+
+    _onInput: function(e) {
+      var target = e.target;
       // Если поле имени, записать в куки
-      if (item.getAttribute('name') === 'review-name') {
-        Cookies.set('review-name', item.value, { expires: form.getCookieExpires() }); // eslint-disable-line
+      if (target.getAttribute('name') === 'review-name') {
+        Cookies.set('review-name', target.value, { expires: this.getCookieExpires() }); // eslint-disable-line
       }
 
-      form.checkRequiredFields();
-    };
-  });
+      this.checkRequiredFields();
+    }
+  };
 
-  // Запуск настроек по-умолчанию
-  form.initialize();
-
-  return form;
+  return Form;
 })();

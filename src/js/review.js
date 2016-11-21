@@ -4,6 +4,9 @@
 
 'use strict';
 
+var ReviewsData = require('./reviewData');
+var assign = require('./assign');
+
 module.exports = (function() {
   var IMAGE_LOAD_TIMEOUT = 10000;
 
@@ -11,110 +14,117 @@ module.exports = (function() {
   var templateContainer = 'content' in template ? template.content : template;
 
   var Review = function(reviewItemData) {
-    var self = this;
-
-    this.data = reviewItemData;
     this.element = templateContainer.querySelector('.review').cloneNode(true);
 
+    this.answerList = this.element.querySelectorAll('.review-quiz-answer');
+
+    ReviewsData.call(this, reviewItemData);
+  };
+
+  assign(Review, ReviewsData);
+
+  Review.prototype.render = function() {
     var reviewText = this.element.querySelector('.review-text');
     var reviewRating = this.element.querySelector('.review-rating');
 
     this.fillImage();
-    reviewRating.classList.add(this.getRatingClass(this.data.rating));
-    reviewText.textContent = this.data.description;
+    reviewRating.classList.add(this.getRatingClass(this.getContent('rating')));
+    reviewText.textContent = this.getContent('description');
 
-    /**
-     * Установка обработчиков на варианты ответа
-     */
-    var setEvaluationListener = function() {
-      var answerList = self.element.querySelectorAll('.review-quiz-answer');
-
-      Array.prototype.forEach.call(answerList, function(answer) {
-        answer.onclick = function() {
-          Array.prototype.forEach.call(answerList, function(item) {
-            item.classList.remove('review-quiz-answer-active');
-          });
-
-          this.classList.add('review-quiz-answer-active');
-        };
-      });
-    };
-
-    setEvaluationListener();
+    this.setEvaluationListener();
 
     return this.element;
   };
 
-  Review.prototype = {
-    /**
-     * Удаление обработчиков
-     */
-    remove: function() {
-      var answerList = this.element.querySelectorAll('.review-quiz-answer');
+  /**
+   * Установка обработчиков на варианты ответа
+   */
+  Review.prototype.setEvaluationListener = function() {
+    Array.prototype.forEach.call(this.answerList, function(answer) {
+      answer.addEventListener('click', this._onClick.bind(this));
+    }.bind(this));
+  };
 
-      Array.prototype.forEach.call(answerList, function(answer) {
-        answer.onclick = null;
-      });
-    },
+  /**
+   * Обработчик клика
+   * @param e - нажатый элемент
+   * @private
+   */
+  Review.prototype._onClick = function(e) {
+    Array.prototype.forEach.call(this.answerList, function(item) {
+      item.classList.remove('review-quiz-answer-active');
+    });
 
-    /**
-     * Получение класса для рейтинга
-     * @param {Number} stars
-     * @returns {String}
-     */
-    getRatingClass: function(stars) {
-      var className = '';
+    e.target.classList.add('review-quiz-answer-active');
+  };
 
-      switch (stars) {
-        case 1:
-          className = 'review-rating-one';
-          break;
-        case 2:
-          className = 'review-rating-two';
-          break;
-        case 3:
-          className = 'review-rating-three';
-          break;
-        case 4:
-          className = 'review-rating-four';
-          break;
-        case 5:
-          className = 'review-rating-five';
-          break;
-        default:
-          break;
-      }
+  /**
+   * Удаление обработчиков
+   */
+  Review.prototype.remove = function() {
+    var answerList = this.element.querySelectorAll('.review-quiz-answer');
 
-      return className;
-    },
+    Array.prototype.forEach.call(answerList, function(answer) {
+      answer.onclick = null;
+    });
+  };
 
-    /**
-     * Заполнение картинки
-     */
-    fillImage: function() {
-      var image = new Image(124, 124);
-      var imageTimeout = null;
-      var reviewImage = this.element.querySelector('.review-author');
-      var self = this;
+  /**
+   * Получение класса для рейтинга
+   * @param {Number} stars
+   * @returns {String}
+   */
+  Review.prototype.getRatingClass = function(stars) {
+    var className = '';
 
-      image.onload = function() {
-        clearTimeout(imageTimeout);
-        reviewImage.src = self.data.author.picture;
-      };
-
-      image.onerror = function() {
-        self.element.classList.add('review-load-failure');
-      };
-
-      image.src = this.data.author.picture;
-      reviewImage.alt = this.data.author.name;
-      reviewImage.title = this.data.author.name;
-
-      imageTimeout = setTimeout(function() {
-        image.src = '';
-        self.element.classList.add('review-load-failure');
-      }, IMAGE_LOAD_TIMEOUT);
+    switch (stars) {
+      case 1:
+        className = 'review-rating-one';
+        break;
+      case 2:
+        className = 'review-rating-two';
+        break;
+      case 3:
+        className = 'review-rating-three';
+        break;
+      case 4:
+        className = 'review-rating-four';
+        break;
+      case 5:
+        className = 'review-rating-five';
+        break;
+      default:
+        break;
     }
+
+    return className;
+  };
+
+  /**
+   * Заполнение картинки
+   */
+  Review.prototype.fillImage = function() {
+    var image = new Image(124, 124);
+    var imageTimeout = null;
+    var reviewImage = this.element.querySelector('.review-author');
+
+    image.onload = function() {
+      clearTimeout(imageTimeout);
+      reviewImage.src = this.getContent(['author', 'picture']);
+    }.bind(this);
+
+    image.onerror = function() {
+      this.element.classList.add('review-load-failure');
+    }.bind(this);
+
+    image.src = this.getContent(['author', 'picture']);
+    reviewImage.alt = this.getContent(['author', 'name']);
+    reviewImage.title = this.getContent(['author', 'name']);
+
+    imageTimeout = setTimeout(function() {
+      image.src = '';
+      this.element.classList.add('review-load-failure');
+    }.bind(this), IMAGE_LOAD_TIMEOUT);
   };
 
   return Review;
