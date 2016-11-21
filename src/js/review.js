@@ -18,22 +18,33 @@ module.exports = (function() {
 
     this.answerList = this.element.querySelectorAll('.review-quiz-answer');
 
+    this.reviewRating = this.element.querySelector('.review-rating');
+
     ReviewsData.call(this, reviewItemData);
+
+    this.setEvaluationListener();
   };
 
   inherit(Review, ReviewsData);
 
   Review.prototype.render = function() {
     var reviewText = this.element.querySelector('.review-text');
-    var reviewRating = this.element.querySelector('.review-rating');
+
+    console.log(this.getRating());
 
     this.fillImage();
-    reviewRating.classList.add(this.getRatingClass(this.getRating()));
+    this.setCurrentRating();
     reviewText.textContent = this.getDescription();
 
-    this.setEvaluationListener();
-
     return this.element;
+  };
+
+  /**
+   * Устанавливает нужный класс
+   */
+  Review.prototype.setCurrentRating = function() {
+    this.reviewRating.classList.remove(this.reviewRating.classList[1]);
+    this.reviewRating.classList.add(this.getRatingClass(this.getRating()));
   };
 
   /**
@@ -51,22 +62,30 @@ module.exports = (function() {
    * @private
    */
   Review.prototype._onClick = function(e) {
+    if (e.target.classList.contains('review-quiz-answer-active')) {
+      return;
+    }
+
     Array.prototype.forEach.call(this.answerList, function(item) {
       item.classList.remove('review-quiz-answer-active');
     });
 
     e.target.classList.add('review-quiz-answer-active');
+
+    if (e.target.classList.contains('review-quiz-answer-yes')) {
+      this.switchRating('plus', this.render.bind(this));
+    } else {
+      this.switchRating('minus', this.render.bind(this));
+    }
   };
 
   /**
    * Удаление обработчиков
    */
-  Review.prototype.remove = function() {
-    var answerList = this.element.querySelectorAll('.review-quiz-answer');
-
-    Array.prototype.forEach.call(answerList, function(answer) {
-      answer.onclick = null;
-    });
+  Review.prototype.removeListeners = function() {
+    Array.prototype.forEach.call(this.answerList, function(answer) {
+      answer.removeEventListener('click', this._onClick.bind(this));
+    }.bind(this));
   };
 
   /**
