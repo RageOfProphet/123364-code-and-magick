@@ -27,6 +27,11 @@ module.exports = (function() {
     loadReviews: function() {
       filters.hideFilters();
 
+      // Если в localStorage записан фильтр, применяем
+      if (localStorage.getItem('filter')) {
+        paramsToLoad.filter = localStorage.getItem('filter');
+      }
+
       load(DATA_URL, paramsToLoad, this.render);
     },
 
@@ -43,6 +48,8 @@ module.exports = (function() {
 
       if (data.length > 0) {
         filters.showFilters();
+
+        filters.setCurrentFilter();
 
         var reviewListElement = document.querySelector('.reviews-list');
 
@@ -93,6 +100,9 @@ module.exports = (function() {
       paramsToLoad.from = 0;
       paramsToLoad.to = PAGE_LIMIT;
       paramsToLoad.filter = target.id;
+
+      // Запись фильтра в localStorage
+      localStorage.setItem('filter', target.id);
       load('/api/reviews', paramsToLoad, reviews.render);
     }
   }, true);
