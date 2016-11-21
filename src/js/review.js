@@ -5,7 +5,6 @@
 'use strict';
 
 var ReviewsData = require('./reviewData');
-var inherit = require('./inherit');
 
 module.exports = (function() {
   var IMAGE_LOAD_TIMEOUT = 10000;
@@ -20,21 +19,17 @@ module.exports = (function() {
 
     this.reviewRating = this.element.querySelector('.review-rating');
 
-    ReviewsData.call(this, reviewItemData);
+    this.data = new ReviewsData(reviewItemData);
 
     this.setEvaluationListener();
   };
 
-  inherit(Review, ReviewsData);
-
   Review.prototype.render = function() {
     var reviewText = this.element.querySelector('.review-text');
 
-    console.log(this.getRating());
-
     this.fillImage();
     this.setCurrentRating();
-    reviewText.textContent = this.getDescription();
+    reviewText.textContent = this.data.getDescription();
 
     return this.element;
   };
@@ -44,7 +39,7 @@ module.exports = (function() {
    */
   Review.prototype.setCurrentRating = function() {
     this.reviewRating.classList.remove(this.reviewRating.classList[1]);
-    this.reviewRating.classList.add(this.getRatingClass(this.getRating()));
+    this.reviewRating.classList.add(this.getRatingClass(this.data.getRating()));
   };
 
   /**
@@ -73,9 +68,9 @@ module.exports = (function() {
     e.target.classList.add('review-quiz-answer-active');
 
     if (e.target.classList.contains('review-quiz-answer-yes')) {
-      this.switchRating('plus', this.render.bind(this));
+      this.data.switchRating('plus', this.render.bind(this));
     } else {
-      this.switchRating('minus', this.render.bind(this));
+      this.data.switchRating('minus', this.render.bind(this));
     }
   };
 
@@ -129,16 +124,16 @@ module.exports = (function() {
 
     image.onload = function() {
       clearTimeout(imageTimeout);
-      reviewImage.src = this.getAuthorAvatar();
+      reviewImage.src = this.data.getAuthorAvatar();
     }.bind(this);
 
     image.onerror = function() {
       this.element.classList.add('review-load-failure');
     }.bind(this);
 
-    image.src = this.getAuthorAvatar();
-    reviewImage.alt = this.getAuthorName();
-    reviewImage.title = this.getAuthorName();
+    image.src = this.data.getAuthorAvatar();
+    reviewImage.alt = this.data.getAuthorName();
+    reviewImage.title = this.data.getAuthorName();
 
     imageTimeout = setTimeout(function() {
       image.src = '';

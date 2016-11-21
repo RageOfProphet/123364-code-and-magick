@@ -16,28 +16,26 @@ module.exports = (function() {
 
   inherit(Filters, BaseComponent);
 
-  Filters.prototype = {
-    /**
-     * Скрытие блока с фильтрами
-     */
-    hideFilters: function() {
-      this.el.classList.add('invisible');
-    },
+  /**
+   * Скрытие блока с фильтрами
+   */
+  Filters.prototype.hideFilters = function() {
+    this.el.classList.add('invisible');
+  };
 
-    /**
-     * Появление блока с фильтрами
-     */
-    showFilters: function() {
-      this.el.classList.remove('invisible');
-    },
+  /**
+   * Появление блока с фильтрами
+   */
+  Filters.prototype.showFilters = function() {
+    this.el.classList.remove('invisible');
+  };
 
-    /**
-     * Установка фильтра из localStorage
-     */
-    setCurrentFilter: function() {
-      if (localStorage.getItem('filter')) {
-        document.querySelector('#' + localStorage.getItem('filter')).checked = true;
-      }
+  /**
+   * Установка фильтра из localStorage
+   */
+  Filters.prototype.setCurrentFilter = function() {
+    if (localStorage.getItem('filter')) {
+      document.querySelector('#' + localStorage.getItem('filter')).checked = true;
     }
   };
 
