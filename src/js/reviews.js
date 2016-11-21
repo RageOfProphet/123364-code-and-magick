@@ -34,92 +34,90 @@ module.exports = (function() {
 
   inherit(Reviews, BaseComponent);
 
-  Reviews.prototype = {
-    /**
-     * Загрузка данных по отзывам
-     */
-    loadReviews: function() {
-      filters.hideFilters();
+  /**
+   * Загрузка данных по отзывам
+   */
+  Reviews.prototype.loadReviews = function() {
+    filters.hideFilters();
 
-      // Если в localStorage записан фильтр, применяем
-      if (localStorage.getItem('filter')) {
-        this.paramsToLoad.filter = localStorage.getItem('filter');
-      }
-
-      load(this.DATA_URL, this.paramsToLoad, this.render.bind(this));
-
-      this._initializeReviewsListeners();
-    },
-
-    /**
-     * Рендер отзывов
-     * @param {Array} data массив полученных с сервера данных
-     */
-    render: function(data) {
-      if (data.length === this.PAGE_LIMIT) {
-        this.moreReviewsBtn.classList.remove('invisible');
-      } else {
-        this.moreReviewsBtn.classList.add('invisible');
-      }
-
-      if (data.length > 0) {
-        filters.showFilters();
-
-        filters.setCurrentFilter();
-
-        data.forEach(function(item) {
-          var review = new Review(item);
-          this.el.appendChild(review.render());
-        }.bind(this));
-      }
-    },
-
-    /**
-     * Удаление списка отзывов
-     */
-    remove: function() {
-      this.el.innerHTML = '';
-      this.paramsToLoad.from = 0;
-    },
-
-    /**
-     * Загрузка отзывов
-     * @type {Element}
-     */
-    _onClick: function() {
-      var pageDifference = this.paramsToLoad.to - this.paramsToLoad.from;
-
-      this.paramsToLoad.from += pageDifference;
-      this.paramsToLoad.to += pageDifference;
-
-      load('/api/reviews', this.paramsToLoad, this.render.bind(this));
-    },
-
-    /**
-     * Фильтрация
-     * @type {Element}
-     */
-    _onChange: function(e) {
-      var target = e.target;
-
-      if (target.name === 'reviews') {
-        this.remove();
-
-        this.paramsToLoad.from = 0;
-        this.paramsToLoad.to = this.PAGE_LIMIT;
-        this.paramsToLoad.filter = target.id;
-
-        // Запись фильтра в localStorage
-        localStorage.setItem('filter', target.id);
-        load('/api/reviews', this.paramsToLoad, this.render.bind(this));
-      }
-    },
-
-    /** @private */
-    _initializeReviewsListeners: function() {
-      this.moreReviewsBtn.addEventListener('click', this._onClick.bind(this));
-      this.filterList.addEventListener('change', this._onChange.bind(this), true);
+    // Если в localStorage записан фильтр, применяем
+    if (localStorage.getItem('filter')) {
+      this.paramsToLoad.filter = localStorage.getItem('filter');
     }
+
+    load(this.DATA_URL, this.paramsToLoad, this.render.bind(this));
+
+    this._initializeReviewsListeners();
+  };
+
+  /**
+   * Рендер отзывов
+   * @param {Array} data массив полученных с сервера данных
+   */
+  Reviews.prototype.render = function(data) {
+    if (data.length === this.PAGE_LIMIT) {
+      this.moreReviewsBtn.classList.remove('invisible');
+    } else {
+      this.moreReviewsBtn.classList.add('invisible');
+    }
+
+    if (data.length > 0) {
+      filters.showFilters();
+
+      filters.setCurrentFilter();
+
+      data.forEach(function(item) {
+        var review = new Review(item);
+        this.el.appendChild(review.render());
+      }.bind(this));
+    }
+  };
+
+  /**
+   * Удаление списка отзывов
+   */
+  Reviews.prototype.remove = function() {
+    this.el.innerHTML = '';
+    this.paramsToLoad.from = 0;
+  };
+
+  /**
+   * Загрузка отзывов
+   * @type {Element}
+   */
+  Reviews.prototype._onClick = function() {
+    var pageDifference = this.paramsToLoad.to - this.paramsToLoad.from;
+
+    this.paramsToLoad.from += pageDifference;
+    this.paramsToLoad.to += pageDifference;
+
+    load('/api/reviews', this.paramsToLoad, this.render.bind(this));
+  };
+
+  /**
+   * Фильтрация
+   * @type {Element}
+   */
+  Reviews.prototype._onChange = function(e) {
+    var target = e.target;
+
+    if (target.name === 'reviews') {
+      this.remove();
+
+      this.paramsToLoad.from = 0;
+      this.paramsToLoad.to = this.PAGE_LIMIT;
+      this.paramsToLoad.filter = target.id;
+
+      // Запись фильтра в localStorage
+      localStorage.setItem('filter', target.id);
+      load('/api/reviews', this.paramsToLoad, this.render.bind(this));
+    }
+  };
+
+  /** @private */
+  Reviews.prototype._initializeReviewsListeners = function() {
+    this.moreReviewsBtn.addEventListener('click', this._onClick.bind(this));
+    this.filterList.addEventListener('change', this._onChange.bind(this), true);
   };
 
   return Reviews;
