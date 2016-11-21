@@ -23,9 +23,7 @@ BaseComponent.prototype = {
     this.el.removeEventListener('click', this.onClick);
   },
 
-  onClick: function() {
-    console.log('Clicked!');
-  },
+  onClick: function() {},
 
   remove: function() {
     this.el.parentNode.removeChild(this.el);

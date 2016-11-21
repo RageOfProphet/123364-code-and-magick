@@ -8,7 +8,7 @@ var load = require('./load');
 var Review = require('./review');
 var Filters = require('./filters');
 var BaseComponent = require('./baseComponent');
-var assign = require('./assign');
+var inherit = require('./inherit');
 
 var filters = new Filters();
 
@@ -30,8 +30,9 @@ module.exports = (function() {
     var reviewListElement = document.querySelector('.reviews-list');
 
     BaseComponent.call(this, reviewListElement);
-    assign(Reviews, BaseComponent);
   };
+
+  inherit(Reviews, BaseComponent);
 
   Reviews.prototype = {
     /**

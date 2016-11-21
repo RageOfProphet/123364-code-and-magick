@@ -5,7 +5,7 @@
 'use strict';
 
 var ReviewsData = require('./reviewData');
-var assign = require('./assign');
+var inherit = require('./inherit');
 
 module.exports = (function() {
   var IMAGE_LOAD_TIMEOUT = 10000;
@@ -21,7 +21,7 @@ module.exports = (function() {
     ReviewsData.call(this, reviewItemData);
   };
 
-  assign(Review, ReviewsData);
+  inherit(Review, ReviewsData);
 
   Review.prototype.render = function() {
     var reviewText = this.element.querySelector('.review-text');

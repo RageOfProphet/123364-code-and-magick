@@ -5,15 +5,16 @@
 'use strict';
 
 var BaseComponent = require('./baseComponent');
-var assign = require('./assign');
+var inherit = require('./inherit');
 
 module.exports = (function() {
   var Filters = function() {
     var filterList = document.querySelector('.reviews-filter');
 
     BaseComponent.call(this, filterList);
-    assign(Filters, BaseComponent);
   };
+
+  inherit(Filters, BaseComponent);
 
   Filters.prototype = {
     /**
