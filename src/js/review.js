@@ -57,20 +57,25 @@ module.exports = (function() {
    * @private
    */
   Review.prototype._onClick = function(e) {
-    if (e.target.classList.contains('review-quiz-answer-active')) {
-      return;
+    if (e.target.classList.contains('review-quiz-answer-yes')) {
+      this.data.usefullness(true, this.setUsefullness.bind(this));
+    } else {
+      this.data.usefullness(false, this.setUsefullness.bind(this));
     }
+  };
 
+  /**
+   * Обновление интерфейса объектов голосования
+   */
+  Review.prototype.setUsefullness = function() {
     Array.prototype.forEach.call(this.answerList, function(item) {
       item.classList.remove('review-quiz-answer-active');
     });
 
-    e.target.classList.add('review-quiz-answer-active');
-
-    if (e.target.classList.contains('review-quiz-answer-yes')) {
-      this.data.switchRating('plus', this.render.bind(this));
+    if (this.data.getUsefullness()) {
+      document.querySelector('.review-quiz-answer-yes').classList.add('review-quiz-answer-active');
     } else {
-      this.data.switchRating('minus', this.render.bind(this));
+      document.querySelector('.review-quiz-answer-no').classList.add('review-quiz-answer-active');
     }
   };
 

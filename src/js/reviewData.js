@@ -22,38 +22,14 @@ ReviewData.prototype = {
     return this.data.rating;
   },
 
-  /**
-   * Переключение рейтингаx
-   * @param {String} [switcher = plus|minus] - переключатель
-   * @param callback
-   */
-  switchRating: function(switcher, callback) {
-    var check = false;
+  usefullness: function(mark, callback) {
+    this.data.usefullness = mark;
 
-    switch (switcher) {
-      case 'plus': {
-        if (this.getRating() < 5) {
-          this.data.rating += 1;
+    callback();
+  },
 
-          check = true;
-        }
-        break;
-      }
-      case 'minus': {
-        if (this.getRating() > 1) {
-          this.data.rating -= 1;
-
-          check = true;
-        }
-        break;
-      }
-      default:
-        break;
-    }
-
-    if (check) {
-      callback();
-    }
+  getUsefullness: function() {
+    return this.data.usefullness;
   },
 
   /**
