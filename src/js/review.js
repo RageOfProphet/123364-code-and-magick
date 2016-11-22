@@ -39,7 +39,7 @@ module.exports = (function() {
    */
   Review.prototype.setCurrentRating = function() {
     this.reviewRating.classList.remove(this.reviewRating.classList[1]);
-    this.reviewRating.classList.add(this.getRatingClass(this.data.getRating()));
+    this.reviewRating.classList.add(this.getRatingClass());
   };
 
   /**
@@ -93,13 +93,12 @@ module.exports = (function() {
 
   /**
    * Получение класса для рейтинга
-   * @param {Number} stars
    * @returns {String}
    */
-  Review.prototype.getRatingClass = function(stars) {
+  Review.prototype.getRatingClass = function() {
     var className = '';
 
-    switch (stars) {
+    switch (this.data.getRating()) {
       case 1:
         className = 'review-rating-one';
         break;
