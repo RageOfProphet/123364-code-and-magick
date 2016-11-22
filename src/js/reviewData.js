@@ -22,12 +22,21 @@ ReviewData.prototype = {
     return this.data.rating;
   },
 
+  /**
+   * Добавляет в данные полезность отзыва
+   * @param {Boolean} mark - полезный/неполезный отзыв
+   * @param callback
+   */
   usefullness: function(mark, callback) {
     this.data.usefullness = mark;
 
     callback();
   },
 
+  /**
+   * Возвращает значение полезности отзыва
+   * @returns {Boolean}
+   */
   getUsefullness: function() {
     return this.data.usefullness;
   },
