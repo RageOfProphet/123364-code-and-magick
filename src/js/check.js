@@ -4,7 +4,7 @@
 
 'use strict';
 
-function getMessage(a, b) {
+(function(a, b) {
   if (typeof a === 'boolean') {
     if (a) {
       return 'Я попал в ' + b;
@@ -33,4 +33,4 @@ function getMessage(a, b) {
   } else {
     return 'Переданы некорректые данные';
   }
-}
+})();
