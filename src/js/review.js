@@ -96,29 +96,15 @@ module.exports = (function() {
    * @returns {String}
    */
   Review.prototype.getRatingClass = function() {
-    var className = '';
+    var classNames = [
+      'review-rating-one',
+      'review-rating-two',
+      'review-rating-three',
+      'review-rating-four',
+      'review-rating-five'
+    ];
 
-    switch (this.data.getRating()) {
-      case 1:
-        className = 'review-rating-one';
-        break;
-      case 2:
-        className = 'review-rating-two';
-        break;
-      case 3:
-        className = 'review-rating-three';
-        break;
-      case 4:
-        className = 'review-rating-four';
-        break;
-      case 5:
-        className = 'review-rating-five';
-        break;
-      default:
-        break;
-    }
-
-    return className;
+    return classNames[this.data.getRating() - 1];
   };
 
   /**
