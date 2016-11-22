@@ -34,5 +34,3 @@ function getMessage(a, b) {
     return 'Переданы некорректые данные';
   }
 }
-
-getMessage(2, 3);

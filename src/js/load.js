@@ -25,7 +25,7 @@ module.exports = function(url, params, callback) {
   };
 
   xhr.onerror = function() {
-    console.log('Ошибка ' + this.status);
+    throw new Error(this.status);
   };
 
   xhr.send();
