@@ -1,24 +1,29 @@
 'use strict';
 
 module.exports = (function() {
-  var form = {
-    onClose: null,
-    RATING_PRECINCT: 3,
+  var Form = function() {
+    this.onClose = null;
+    this.RATING_PRECINCT = 3;
 
-    element: {
-      formContainer: document.querySelector('.overlay-container'),
-      formCloseButton: document.querySelector('.review-form-close'),
-      formOpenButton: document.querySelector('.reviews-controls-new'),
-      formElement: document.forms.reviewForm,
-      formReviewButtons: this.element.formElement.querySelector('.review-form-group-mark'),
-      reviewFields: this.element.formElement.querySelector('.review-fields'),
-      reviewFormFields: this.element.formElement.querySelectorAll('.review-form-field'),
-      reviewFieldsLabel: document.querySelectorAll('.review-fields-label'),
-      submitButton: this.element.formElement.querySelector('.review-submit'),
-      rating: this.element.formReviewButtons.querySelector('[name="review-mark"]:checked'),
-      reviewField: document.getElementById('review-text')
-    },
+    this.formContainer = document.querySelector('.overlay-container');
+    this.formCloseButton = document.querySelector('.review-form-close');
+    this.formOpenButton = document.querySelector('.reviews-controls-new');
+    this.formElement = document.forms.reviewForm;
+    this.formReviewButtons = this.formElement.querySelector('.review-form-group-mark');
+    this.reviewFields = this.formElement.querySelector('.review-fields');
+    this.reviewFormFields = this.formElement.querySelectorAll('.review-form-field');
+    this.reviewFieldsLabel = document.querySelectorAll('.review-fields-label');
+    this.submitButton = this.formElement.querySelector('.review-submit');
+    this.rating = this.formReviewButtons.querySelector('[name="review-mark"]:checked');
+    this.reviewField = document.getElementById('review-text');
 
+    this.setListeners();
+
+    // Запуск настроек по-умолчанию
+    this.initialize();
+  };
+
+  Form.prototype = {
     /**
      * Иницилизация фунций при загрузке страницы
      */
@@ -37,7 +42,7 @@ module.exports = (function() {
     initCookie: function(name) {
       var cookie = Cookies.get(name); // eslint-disable-line
       if (cookie !== undefined) { // eslint-disable-line
-        var input = this.element.formElement.elements[name];
+        var input = this.formElement.elements[name];
 
         if (input.length > 1) {
           input = input[0];
@@ -73,14 +78,14 @@ module.exports = (function() {
      * Открытие модального окна
      */
     open: function() {
-      this.element.formContainer.classList.remove('invisible');
+      this.formContainer.classList.remove('invisible');
     },
 
     /**
      * Закрытие модального окна
      */
     close: function() {
-      this.element.formContainer.classList.add('invisible');
+      this.formContainer.classList.add('invisible');
 
       if (typeof this.onClose === 'function') {
         this.onClose();
@@ -93,7 +98,7 @@ module.exports = (function() {
      */
     addLabel: function(input) {
       var inputId = input.id;
-      var label = this.element.reviewFields.querySelector('[for="' + inputId + '"]');
+      var label = this.reviewFields.querySelector('[for="' + inputId + '"]');
 
       label.classList.remove('invisible');
 
@@ -106,7 +111,7 @@ module.exports = (function() {
      */
     removeLabel: function(input) {
       var inputId = input.id;
-      var label = this.element.reviewFields.querySelector('[for="' + inputId + '"]');
+      var label = this.reviewFields.querySelector('[for="' + inputId + '"]');
 
       label.classList.add('invisible');
 
@@ -119,8 +124,8 @@ module.exports = (function() {
     removeLabelList: function() {
       var flag = true;
 
-      for (var i = 0; i < this.element.reviewFieldsLabel.length; i++) {
-        if (!this.element.reviewFieldsLabel[i].classList.contains('invisible')) {
+      for (var i = 0; i < this.reviewFieldsLabel.length; i++) {
+        if (!this.reviewFieldsLabel[i].classList.contains('invisible')) {
           flag = false;
 
           break;
@@ -128,9 +133,9 @@ module.exports = (function() {
       }
 
       if (flag) {
-        this.element.reviewFields.classList.add('invisible');
+        this.reviewFields.classList.add('invisible');
       } else {
-        this.element.reviewFields.classList.remove('invisible');
+        this.reviewFields.classList.remove('invisible');
       }
     },
 
@@ -140,9 +145,9 @@ module.exports = (function() {
      */
     disableSubmitButton: function(flag) {
       if (flag) {
-        this.element.submitButton.setAttribute('disabled', 'true');
+        this.submitButton.setAttribute('disabled', 'true');
       } else {
-        this.element.submitButton.removeAttribute('disabled');
+        this.submitButton.removeAttribute('disabled');
       }
     },
 
@@ -153,13 +158,13 @@ module.exports = (function() {
     checkRequiredFields: function() {
       var flag = false;
 
-      for (var i = 0; i < this.element.reviewFormFields.length; i++) {
-        if (this.element.reviewFormFields[i].hasAttribute('required')) {
-          if (this.element.reviewFormFields[i].value.length === 0) {
+      for (var i = 0; i < this.reviewFormFields.length; i++) {
+        if (this.reviewFormFields[i].hasAttribute('required')) {
+          if (this.reviewFormFields[i].value.length === 0) {
             flag = true;
-            this.addLabel(this.element.reviewFormFields[i]);
+            this.addLabel(this.reviewFormFields[i]);
           } else {
-            this.removeLabel(this.element.reviewFormFields[i]);
+            this.removeLabel(this.reviewFormFields[i]);
           }
         }
       }
@@ -176,59 +181,58 @@ module.exports = (function() {
      * в зависимости от рейтинга
      */
     checkReviewField: function() {
-      if (+this.element.rating.value < form.RATING_PRECINCT) {
-        this.element.reviewField.setAttribute('required', 'true');
-        this.addLabel(this.element.reviewField);
+      if (+this.rating.value < this.RATING_PRECINCT) {
+        this.reviewField.setAttribute('required', 'true');
+        this.addLabel(this.reviewField);
       } else {
-        this.element.reviewField.removeAttribute('required');
-        this.removeLabel(this.element.reviewField);
+        this.reviewField.removeAttribute('required');
+        this.removeLabel(this.reviewField);
       }
+    },
+
+    setListeners: function() {
+      // Обработчик на инпуты
+      Array.prototype.forEach.call(this.reviewFormFields, function(item) {
+        item.oninput = function() {
+          // Если поле имени, записать в куки
+          if (item.getAttribute('name') === 'review-name') {
+            Cookies.set('review-name', item.value, {expires: this.getCookieExpires()}); // eslint-disable-line
+          }
+
+          this.checkRequiredFields();
+        }.bind(this);
+      }.bind(this));
+
+      // Закрытие модального окна
+      this.formCloseButton.onclick = function(evt) {
+        evt.preventDefault();
+        this.close();
+      }.bind(this);
+
+      // Открытие модального окна
+      this.formOpenButton.onclick = function(evt) {
+        evt.preventDefault();
+        this.open();
+      }.bind(this);
+
+      // Клик на звезды рейтинга
+      this.formReviewButtons.onclick = function(evt) {
+        var target = evt.target || evt.srcElement;
+        var reviewRating = null;
+
+        // Если нажал на звездочку
+        if (target.getAttribute('name') === 'review-mark') {
+          reviewRating = +target.value;
+
+          // Записать в куки
+          Cookies.set('review-mark', reviewRating, {expires: this.getCookieExpires()}); // eslint-disable-line
+
+          this.checkReviewField();
+          this.checkRequiredFields();
+        }
+      }.bind(this);
     }
   };
 
-  // Закрытие модального окна
-  this.element.formCloseButton.onclick = function(evt) {
-    evt.preventDefault();
-    form.close();
-  };
-
-  // Открытие модального окна
-  this.element.formOpenButton.onclick = function(evt) {
-    evt.preventDefault();
-    form.open();
-  };
-
-  // Клик на звезды рейтинга
-  this.element.formReviewButtons.onclick = function(evt) {
-    var target = evt.target || evt.srcElement;
-    var reviewRating = null;
-
-    // Если нажал на звездочку
-    if (target.getAttribute('name') === 'review-mark') {
-      reviewRating = +target.value;
-
-      // Записать в куки
-      Cookies.set('review-mark', reviewRating, { expires: form.getCookieExpires() }); // eslint-disable-line
-
-      form.checkReviewField();
-      form.checkRequiredFields();
-    }
-  };
-
-  // Обработчик на инпуты
-  Array.prototype.forEach.call(this.element.reviewFormFields, function(item) {
-    item.oninput = function() {
-      // Если поле имени, записать в куки
-      if (item.getAttribute('name') === 'review-name') {
-        Cookies.set('review-name', item.value, { expires: form.getCookieExpires() }); // eslint-disable-line
-      }
-
-      form.checkRequiredFields();
-    };
-  });
-
-  // Запуск настроек по-умолчанию
-  form.initialize();
-
-  return form;
+  return Form;
 })();
