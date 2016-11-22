@@ -72,6 +72,7 @@ module.exports = (function() {
       item.classList.remove('review-quiz-answer-active');
     });
 
+    // Если отзыв полезный, выделяем «Да», иначе «Нет»
     if (this.data.getUsefullness()) {
       this.answerList[0].parentNode.querySelector('.review-quiz-answer-yes')
         .classList.add('review-quiz-answer-active');
