@@ -15,35 +15,69 @@ var ReviewData = function(data) {
 
 ReviewData.prototype = {
   /**
-   * Возвращает строку запрашиваемых данных
-   * @param {String|Object} item - запрашиваемые данные
+   * Возвращает рейтинг отзыва
    * @returns {String}
    */
-  getContent: function(item) {
-    var result = this.data;
+  getRating: function() {
+    return this.data.rating;
+  },
 
-    switch (typeof item) {
-      case 'string':
-      case 'number': {
-        result = this.data[item];
+  /**
+   * Переключение рейтингаx
+   * @param {String} [switcher = plus|minus] - переключатель
+   * @param callback
+   */
+  switchRating: function(switcher, callback) {
+    var check = false;
 
-        break;
-      }
-      case 'object': {
-        if (Array.isArray(item)) {
-          item.forEach(function(key) {
-            result = result[key];
-          });
+    switch (switcher) {
+      case 'plus': {
+        if (this.getRating() < 5) {
+          this.data.rating += 1;
+
+          check = true;
         }
+        break;
+      }
+      case 'minus': {
+        if (this.getRating() > 1) {
+          this.data.rating -= 1;
 
+          check = true;
+        }
         break;
       }
-      default: {
+      default:
         break;
-      }
     }
 
-    return result;
+    if (check) {
+      callback();
+    }
+  },
+
+  /**
+   * Возвращает контент отзыва
+   * @returns {String}
+   */
+  getDescription: function() {
+    return this.data.description;
+  },
+
+  /**
+   * Возвращает аватар автора отзыва
+   * @returns {String}
+   */
+  getAuthorAvatar: function() {
+    return this.data.author.picture;
+  },
+
+  /**
+   * Возвращает имя автора отзыва
+   * @returns {String}
+   */
+  getAuthorName: function() {
+    return this.data.author.name;
   }
 };
 

@@ -5,38 +5,37 @@
 'use strict';
 
 var BaseComponent = require('./baseComponent');
-var assign = require('./assign');
+var inherit = require('./inherit');
 
 module.exports = (function() {
   var Filters = function() {
     var filterList = document.querySelector('.reviews-filter');
 
     BaseComponent.call(this, filterList);
-    assign(Filters, BaseComponent);
   };
 
-  Filters.prototype = {
-    /**
-     * Скрытие блока с фильтрами
-     */
-    hideFilters: function() {
-      this.el.classList.add('invisible');
-    },
+  inherit(Filters, BaseComponent);
 
-    /**
-     * Появление блока с фильтрами
-     */
-    showFilters: function() {
-      this.el.classList.remove('invisible');
-    },
+  /**
+   * Скрытие блока с фильтрами
+   */
+  Filters.prototype.hideFilters = function() {
+    this.el.classList.add('invisible');
+  };
 
-    /**
-     * Установка фильтра из localStorage
-     */
-    setCurrentFilter: function() {
-      if (localStorage.getItem('filter')) {
-        document.querySelector('#' + localStorage.getItem('filter')).checked = true;
-      }
+  /**
+   * Появление блока с фильтрами
+   */
+  Filters.prototype.showFilters = function() {
+    this.el.classList.remove('invisible');
+  };
+
+  /**
+   * Установка фильтра из localStorage
+   */
+  Filters.prototype.setCurrentFilter = function() {
+    if (localStorage.getItem('filter')) {
+      document.querySelector('#' + localStorage.getItem('filter')).checked = true;
     }
   };
 
