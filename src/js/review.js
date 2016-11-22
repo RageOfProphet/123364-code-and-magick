@@ -72,10 +72,13 @@ module.exports = (function() {
       item.classList.remove('review-quiz-answer-active');
     });
 
+    // Если отзыв полезный, выделяем «Да», иначе «Нет»
     if (this.data.getUsefullness()) {
-      document.querySelector('.review-quiz-answer-yes').classList.add('review-quiz-answer-active');
+      this.answerList[0].parentNode.querySelector('.review-quiz-answer-yes')
+        .classList.add('review-quiz-answer-active');
     } else {
-      document.querySelector('.review-quiz-answer-no').classList.add('review-quiz-answer-active');
+      this.answerList[0].parentNode.querySelector('.review-quiz-answer-no')
+        .classList.add('review-quiz-answer-active');
     }
   };
 
