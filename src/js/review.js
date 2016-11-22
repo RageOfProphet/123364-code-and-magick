@@ -39,7 +39,7 @@ module.exports = (function() {
    */
   Review.prototype.setCurrentRating = function() {
     this.reviewRating.classList.remove(this.reviewRating.classList[1]);
-    this.reviewRating.classList.add(this.getRatingClass(this.data.getRating()));
+    this.reviewRating.classList.add(this.getRatingClass());
   };
 
   /**
@@ -93,33 +93,18 @@ module.exports = (function() {
 
   /**
    * Получение класса для рейтинга
-   * @param {Number} stars
    * @returns {String}
    */
-  Review.prototype.getRatingClass = function(stars) {
-    var className = '';
+  Review.prototype.getRatingClass = function() {
+    var classNames = [
+      'review-rating-one',
+      'review-rating-two',
+      'review-rating-three',
+      'review-rating-four',
+      'review-rating-five'
+    ];
 
-    switch (stars) {
-      case 1:
-        className = 'review-rating-one';
-        break;
-      case 2:
-        className = 'review-rating-two';
-        break;
-      case 3:
-        className = 'review-rating-three';
-        break;
-      case 4:
-        className = 'review-rating-four';
-        break;
-      case 5:
-        className = 'review-rating-five';
-        break;
-      default:
-        break;
-    }
-
-    return className;
+    return classNames[this.data.getRating() - 1];
   };
 
   /**
