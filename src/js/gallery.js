@@ -25,37 +25,48 @@ module.exports = (function() {
       previewNumberCurrent: document.querySelector('.preview-number-current'),
       previewNumberTotal: document.querySelector('.preview-number-total')
     };
+
+    window.addEventListener('hashchange', function(e) {
+      var hash = e.newURL.match(/#photo\/(\S+)/);
+
+      this.checkHash(hash);
+    }.bind(this));
   };
 
   Gallery.prototype = {
+    checkHash: function(hash) {
+      if (hash) {
+        this.show(hash[1]);
+      } else {
+        this.hide();
+      }
+    },
+
     /**
      * Запуск галереи
-     *
-     * @param {Number} picture - номер отображаемой картинки
+     * @param {Number|String} picture - номер отображаемой картинки или путь к картинке
      */
     show: function(picture) {
-      var self = this;
-
       // Запуск обработчиков
       this.element.close.onclick = function() {
-        self.hide();
-      };
+        this.hide();
+      }.bind(this);
 
       this.element.controlLeft.onclick = function() {
-        var prevPicture = self.activePicture - 1;
+        var prevPicture = this.activePicture - 1;
 
         if (prevPicture >= 0) {
-          self.setActivePicture(prevPicture);
+          location.hash = 'photo' + this.pictures[prevPicture].replace(location.origin, '');
         }
-      };
+      }.bind(this);
 
       this.element.controlRight.onclick = function() {
-        var nextPicture = self.activePicture + 1;
+        var nextPicture = this.activePicture + 1;
 
-        if (nextPicture < self.pictures.length) {
-          self.setActivePicture(nextPicture);
+        if (nextPicture < this.pictures.length) {
+          location.hash = 'photo' + this.pictures[nextPicture].replace(location.origin, '');
         }
-      };
+      }.bind(this);
 
       // Установка количества картинок в счетчик
       this.element.previewNumberTotal.textContent = this.pictures.length;
@@ -71,6 +82,7 @@ module.exports = (function() {
      * Выключение галереи
      */
     hide: function() {
+      location.hash = '';
       // Скрытие галереи
       this.element.gallery.classList.add('invisible');
 
@@ -82,11 +94,26 @@ module.exports = (function() {
 
     /**
      * Установка активной картинки
-     * @param {Number} picture - номер отображаемой картинки
+     * @param {Number|String} picture - номер отображаемой картинки или путь к картинке
      */
     setActivePicture: function(picture) {
-      // Запись активной картинки в конструктор
-      this.activePicture = picture;
+      switch (typeof picture) {
+        case 'number': {
+          this.activePicture = picture;
+          break;
+        }
+        case 'string': {
+          this.pictures.forEach(function(image, index) {
+            if (image.indexOf(picture) !== -1) {
+              this.activePicture = index;
+            }
+          }.bind(this));
+          break;
+        }
+        default: {
+          break;
+        }
+      }
 
       // Создание новой картинки
       var image = new Image();
@@ -102,7 +129,7 @@ module.exports = (function() {
       }
 
       // Запись номера картинки в счетчик
-      this.element.previewNumberCurrent.textContent = picture + 1;
+      this.element.previewNumberCurrent.textContent = this.activePicture + 1;
     }
   };
 

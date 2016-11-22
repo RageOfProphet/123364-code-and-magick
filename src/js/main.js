@@ -48,19 +48,14 @@
 
   var gallery = new Gallery(pictures);
 
+  // Проверка хэша. Открытие фотографии, если есть ссылка на фото.
+  gallery.checkHash(location.hash.match(/#photo\/(\S+)/));
+
   // Обработчик на каждый контейнер с картинкой
   for (var i = 0; i < imagesContainers.length; i++) {
     imagesContainers[i].onclick = function() {
       var currentImage = this.querySelector('img');
-      var pictureNumber = null;
-
-      pictures.forEach(function(imageSrc, index) {
-        if (imageSrc === currentImage.src) {
-          pictureNumber = index;
-        }
-      });
-
-      gallery.show(pictureNumber);
+      location.hash = 'photo' + currentImage.src.replace(location.origin, '');
     };
   }
 })();
